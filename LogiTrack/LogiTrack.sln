@@ -4,10 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogiTrack", "LogiTrack.csproj", "{F0A6D9A4-BAA3-4C2F-872C-94F5BB3BF6A3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E4A1B116-D5B7-423A-8234-71214E28DB62} = {E4A1B116-D5B7-423A-8234-71214E28DB62}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogiTrack.Core", "..\LogiTrack.Core\LogiTrack.Core.csproj", "{390990C6-1134-43A8-A4D0-D717646733D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogiTrack.Infrastructure", "..\LogiTrack.Infrastructure\LogiTrack.Infrastructure.csproj", "{E4A1B116-D5B7-423A-8234-71214E28DB62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogiTrack.Infrastructure", "..\LogiTrack.Infrastructure\LogiTrack.Infrastructure.csproj", "{E4A1B116-D5B7-423A-8234-71214E28DB62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
