@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -23,7 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <Folder Include="ViewModels\Accountant\" />
+    <Folder Include="ViewModels\Delivery\" />
+    <Folder Include="ViewModels\Driver\" />
+    <Folder Include="ViewModels\Home\" />
   </ItemGroup>
 
   <ItemGroup>
