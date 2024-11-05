@@ -14,7 +14,7 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(x => x.Offer)
                 .WithOne(x => x.Request)
-                .HasForeignKey<Offer>(x => x.RequestId) 
+                .HasForeignKey<Offer>(x => x.RequestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CalculatedPrice)
@@ -23,6 +23,15 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
             builder.Property(x => x.ApproximatePrice)
                 .HasColumnType("decimal(18,2)");
 
+            builder.HasOne(x => x.PickupAddress)
+                .WithOne()
+                .HasForeignKey<Request>(x => x.PickupAddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.DeliveryAddress)
+                .WithOne()
+                .HasForeignKey<Request>(x => x.DeliveryAddressId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

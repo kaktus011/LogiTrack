@@ -25,6 +25,11 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
             builder.HasMany(x => x.Invoices)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.Address)
+                .WithOne()
+                .HasForeignKey<ClientCompany>(x => x.AddressId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

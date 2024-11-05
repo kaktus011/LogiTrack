@@ -14,11 +14,11 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         public int Id { get; set; }
 
         [Comment("User identifier")]
-        public string? UserId { get; set; } 
+        public string? UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
         [Comment("User")]
-        public IdentityUser? User { get; set; } 
+        public IdentityUser? User { get; set; }
 
         [Required]
         [StringLength(CompanyNameMaxLength)]
@@ -51,24 +51,19 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         public string Industry { get; set; } = string.Empty;
 
         [Required]
-        [Comment("Company's address")]
-        [StringLength(StreetMaxLength)]
-        public string Street { get; set; } = string.Empty;
+        [Comment("Address of the company identifier")]
+        public int AddressId { get; set; }
+
+        [ForeignKey(nameof(AddressId))]
+        [Comment("Address of the company")]
+        public Address Address { get; set; } = null!;
 
         [Required]
-        [Comment("Company's city")]
-        [StringLength(CityMaxLength)]
-        public string City { get; set; } = string.Empty;
+        [Comment("Delivery address identifier")]
+        public int DeliveryAddressId { get; set; }
 
-        [Required]
-        [Comment("Company's postal code")]
-        [StringLength(PostalCodeMaxLength)]
-        public string PostalCode { get; set; } = string.Empty;
-
-        [Required]
-        [Comment("Company's country")]
-        [StringLength(CountryMaxLength)]
-        public string Country { get; set; } = string.Empty;
+        [ForeignKey(nameof(DeliveryAddressId))]
+        public Address DeliveryAddress { get; set; } = null!;
 
         [Required]
         [Comment("Registration created at")]
