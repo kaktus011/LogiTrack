@@ -1,8 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LogiTrack.Infrastructure;
+using LogiTrack.Core.Contracts;
+using LogiTrack.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
