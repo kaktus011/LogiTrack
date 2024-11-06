@@ -30,6 +30,8 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .WithOne()
                 .HasForeignKey<ClientCompany>(x => x.AddressId)
                 .OnDelete(DeleteBehavior.Restrict);
+            var data = new SeedData();
+            builder.HasData(new ClientCompany[] { data.ClientCompany1, data.ClientCompany2 });
         }
     }
 }

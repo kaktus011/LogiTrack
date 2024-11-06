@@ -25,6 +25,9 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
 
             builder.Property(x => x.InternationalPriceForNotSharedTruck)
                 .HasColumnType("decimal(18,2)");
-        }
+            var data = new SeedData();
+            builder.HasData(new PricesPerSize[] { data.PricesPerSize1, data.PricesPerSize2 });
+        
+    }
     }
 }

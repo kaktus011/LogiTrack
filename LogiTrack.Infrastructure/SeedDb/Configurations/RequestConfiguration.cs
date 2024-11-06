@@ -32,6 +32,8 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .WithOne()
                 .HasForeignKey<Request>(x => x.DeliveryAddressId)
                 .OnDelete(DeleteBehavior.Restrict);
+            var data = new SeedData();
+            builder.HasData(new Request[] { data.Request1, data.Request2, data.Request3, data.Request4, data.Request5 });
         }
     }
 }

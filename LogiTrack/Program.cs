@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using LogiTrack.Infrastructure;
 using LogiTrack.Core.Contracts;
 using LogiTrack.Core.Services;
+using LogiTrack.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

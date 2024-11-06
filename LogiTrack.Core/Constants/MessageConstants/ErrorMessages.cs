@@ -7,5 +7,7 @@
         public const string DriverNotFoundErrorMessage = "Driver not found.";
         public const string InvalidCoordinatesErrorMessage = "Invalid coordinates.";
         public const string LicenseExpirationErrorMessage = "Your driver's license will expire soon.";
+        public const string RequiredFieldErrorMessage = "{0} is required.";
+        public const string LengthErrorMessage = "{0} should be between {2} and {1} characters.";
     }
 }

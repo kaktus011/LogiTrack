@@ -15,10 +15,14 @@ namespace LogiTrack.Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new IdentityUserConfiguration());
+            builder.ApplyConfiguration(new IdentityRolesConfiguration());
+            builder.ApplyConfiguration(new IdentityUserRolesConfiguration());
+            builder.ApplyConfiguration(new AddressConfiguration());
             builder.ApplyConfiguration(new CashRegisterConfiguration());
             builder.ApplyConfiguration(new ClientCompanyConfiguration());
             builder.ApplyConfiguration(new InvoiceConnfiguration());
-            builder.ApplyConfiguration(new OfferConfiguration());                      
+            builder.ApplyConfiguration(new OfferConfiguration());
             builder.ApplyConfiguration(new RequestConfiguration());
             builder.ApplyConfiguration(new StandartCargoConfiguration());
             builder.ApplyConfiguration(new NonStandardCargoConfiguration());
@@ -47,5 +51,6 @@ namespace LogiTrack.Infrastructure
         public DbSet<CalendarEvent> CalendarEvents { get; set; } = null!;
         public DbSet<NonStandardCargo> NonStandardCargos { get; set; } = null!;
         public DbSet<StandartCargo> StandartCargos { get; set; } = null!;
+        public DbSet<Address> Addresses { get; set; } = null!;
     }
 }
