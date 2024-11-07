@@ -26,5 +26,10 @@ namespace LogiTrack.Controllers
         {
             return View();
         }
+
+        public IActionResult Logout()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
