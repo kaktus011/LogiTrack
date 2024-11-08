@@ -29,6 +29,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<GeocodingService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
