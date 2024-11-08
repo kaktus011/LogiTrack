@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using LogiTrack.Core.CustomExceptions;
 using LogiTrack.Core.Constants;
+using LogiTrack.Core.ViewModels.Accountant;
+using LogisticsSystem.Infrastructure.Data.DataModels;
 
 namespace LogiTrack.Core.Services
 {
@@ -265,6 +267,210 @@ namespace LogiTrack.Core.Services
             }).ToList();
             return deliveriesToShow;
         }
+
+        public async Task<DeliveryForAccountantViewModel> GetDeliveryDetailsForAccountantAsync(int id)
+        {
+            var delivery = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>().Where(x => x.Id == id)
+                                .Include(x => x.Vehicle)
+                .Include(x => x.Driver)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.ClientCompany)
+                .ThenInclude(x => x.User)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.ClientCompany)
+                .ThenInclude(x => x.Address)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.PickupAddress)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.DeliveryAddress)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.StandartCargo)
+
+                .FirstOrDefaultAsync();
+            var model = new DeliveryForAccountantViewModel
+            {
+                Id = delivery.Id,
+                ClientCompanyName = delivery.Offer.Request.ClientCompany.Name,
+                ClientAddress = $"{delivery.Offer.Request.ClientCompany.Address.City}, {delivery.Offer.Request.ClientCompany.Address.City}, {delivery.Offer.Request.ClientCompany.Address.Street}, {delivery.Offer.Request.ClientCompany.Address.PostalCode} ",
+                ClientEmail = delivery.Offer.Request.ClientCompany.User.Email,
+                ClientPhone = delivery.Offer.Request.ClientCompany.User.PhoneNumber,
+                PickupAddress = $"{delivery.Offer.Request.PickupAddress.Street}, {delivery.Offer.Request.PickupAddress.City}, {delivery.Offer.Request.PickupAddress.County}",
+                DeliveryAddress = $"{delivery.Offer.Request.DeliveryAddress.Street}, {delivery.Offer.Request.DeliveryAddress.City}, {delivery.Offer.Request.DeliveryAddress.County}",
+                VehicleRegistrationNumber = delivery.Vehicle.RegistrationNumber.ToString(),
+                TotalExpenses = delivery.TotalExpenses.ToString(),
+                Profit = delivery.Profit.ToString(),
+                ReferenceNumber = delivery.ReferenceNumber,
+                DriverName = delivery.Driver.Name,
+                VehicleType = delivery.Vehicle.VehicleType,
+                RegistrationNumber = delivery.Vehicle.RegistrationNumber,
+                Age = delivery.Driver.Age.ToString(),
+                Name = delivery.Driver.Name,
+                Salary = delivery.Driver.Salary.ToString(),
+                YearOfExperience = delivery.Driver.YearOfExperience.ToString(),
+                MonthsOfExperience = delivery.Driver.MonthsOfExperience.ToString(),
+                DeliveryStep = delivery.DeliveryStep,
+                IsPaid = await repository.AllReadonly<Invoice>().AnyAsync(x => x.DeliveryId == delivery.Id && x.IsPaid == true)
+            };
+
+            var cashRegisters = await repository.AllReadonly<Infrastructure.Data.DataModels.CashRegister>().Where(x => x.DeliveryId == delivery.Id)
+                .Select(x => new CashRegisterIndexViewModel()
+                {
+                    Id = x.Id,
+                    Type = x.Type,
+                    Amount = x.Amount.ToString(),
+                    Description = x.Description,
+                    DateSubmitted = x.DateSubmitted.ToString("dd-MM-yyyy"),
+                    //FileId = x.FileId
+                })
+                .ToListAsync();
+            foreach (var register in cashRegisters)
+            {
+                // register.FileUrl = await googleDriveService.GetFileUrlAsync(register.FileId);
+            }
+            model.CashRegisters = cashRegisters;
+            model.NonStandardCargos = await repository.AllReadonly<Infrastructure.Data.DataModels.NonStandardCargo>().Where(x => x.RequestId == delivery.Offer.RequestId)
+                .Select(x => new NonStandardCargosViewModel
+                {
+                    Length = x.Length.ToString(),
+                    Width = x.Width.ToString(),
+                    Height = x.Height.ToString(),
+                    Weight = x.Weight.ToString()
+                }).ToListAsync();
+            var invoice = await repository.AllReadonly<Invoice>().Where(x => x.DeliveryId == delivery.Id)
+                .Select(x => new InvoiceForDeliveryViewModel
+                {
+                    IsPaid = x.IsPaid,
+                    Amount = x.Delivery.Offer.FinalPrice.ToString(),
+                    Date = x.InvoiceDate.ToString("dd-MM-yyyy"),
+                    Description = x.Description,
+                    Number = x.InvoiceNumber,
+                    //FileId = x.FileId
+                }).FirstOrDefaultAsync();
+            //invoice.FileUrl = await googleDriveService.GetFileUrlAsync(invoice.FileId);
+            model.Invoice = invoice;
+            return model;
+        }
+
+        public async Task<List<DeliveryViewModel>> GetDeliveryForAccountantAsync(string? referenceNumber = null, DateTime? endDate = null, DateTime? startDate = null, string? clientCompanyName = null, bool? isPaid = null)
+        {
+            var deliveries = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>()
+               .Include(x => x.Vehicle)
+               .Include(x => x.Driver)
+               .Include(x => x.Offer)
+               .ThenInclude(x => x.Request)
+               .ThenInclude(x => x.ClientCompany)
+               .Include(x => x.Offer)
+               .ThenInclude(x => x.Request)
+               .ThenInclude(x => x.PickupAddress)
+               .Include(x => x.Offer)
+               .ThenInclude(x => x.Request)
+               .ThenInclude(x => x.DeliveryAddress)
+               .Include(x => x.Invoice)
+               .ToListAsync();
+
+            if (string.IsNullOrEmpty(referenceNumber) == false)
+            {
+                deliveries = deliveries.Where(x => x.ReferenceNumber == referenceNumber).ToList();
+            }
+            if (endDate != null)
+            {
+                deliveries = deliveries.Where(x => x.Offer.Request.ExpectedDeliveryDate <= endDate).ToList();
+            }
+            if (startDate != null)
+            {
+                deliveries = deliveries.Where(x => x.Offer.Request.ExpectedDeliveryDate >= startDate).ToList();
+            }
+            if (string.IsNullOrEmpty(clientCompanyName) == false)
+            {
+                deliveries = deliveries.Where(x => x.Offer.Request.ClientCompany.Name.Contains(clientCompanyName)).ToList();
+            }
+            if (isPaid == false)
+            {
+                deliveries = deliveries.Where(x => x.Invoice.IsPaid == false).ToList();
+            }
+            else if (isPaid == true)
+            {
+                deliveries = deliveries.Where(x => x.Invoice.IsPaid == true).ToList();
+            }
+            var deliveriesToShow = deliveries.Select(x => new DeliveryViewModel
+            {
+                Id = x.Id,
+                RequestId = x.Offer.RequestId,
+                ClientCompanyId = x.Offer.Request.ClientCompanyId,
+                ClientCompanyName = x.Offer.Request.ClientCompany.Name,
+                CargoType = x.Offer.Request.CargoType,
+                TotalCargos = (x.Offer.Request.StandartCargo?.NumberOfPallets ?? 0) + (x.Offer.Request.NumberOfNonStandartGoods ?? 0),
+                TotalVolume = x.Offer.Request.TotalVolume.ToString(),
+                TotalWeight = x.Offer.Request.TotalWeight.ToString(),
+                NumberOfNonStandartGoods = x.Offer.Request.NumberOfNonStandartGoods.ToString(),
+                TypeOfGoods = x.Offer.Request.TypeOfGoods,
+                PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
+                DeliveryAddress = $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}",
+                SharedTruck = x.Offer.Request.SharedTruck,
+                ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd/MM/yyyy"),
+                SpecialInstructions = x.Offer.Request.SpecialInstructions,
+                IsRefrigerated = x.Offer.Request.IsRefrigerated,
+                ReferenceNumber = x.ReferenceNumber,
+                IsPaid = x.Invoice?.IsPaid ?? false
+            }).ToList();
+            return deliveriesToShow;
+        }
+        public async Task<List<DeliveryViewModel>> GetDeliveriesForAccountantBySearchtermAsync(string? searchTerm = null)
+        {
+            var deliveries = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>()
+              .Include(x => x.Vehicle)
+              .Include(x => x.Driver)
+              .Include(x => x.Offer)
+              .ThenInclude(x => x.Request)
+              .ThenInclude(x => x.ClientCompany)
+              .Include(x => x.Offer)
+              .ThenInclude(x => x.Request)
+              .ThenInclude(x => x.PickupAddress)
+              .Include(x => x.Offer)
+              .ThenInclude(x => x.Request)
+              .ThenInclude(x => x.DeliveryAddress)
+              .Include(x => x.Invoice)
+              .ToListAsync();
+            if (string.IsNullOrEmpty(searchTerm) == false)
+            {
+                deliveries = deliveries.Where(x => x.Offer.Request.ClientCompany.Name.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.DeliveryAddress.City.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.DeliveryAddress.County.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.DeliveryAddress.Street.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.PickupAddress.City.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.PickupAddress.County.ToLower().Contains(searchTerm.ToLower())
+                               || x.Offer.Request.PickupAddress.Street.ToLower().Contains(searchTerm.ToLower())
+                               || x.ReferenceNumber.ToLower().Contains(searchTerm.ToLower())).ToList();
+            }
+            var deliveriesToShow = deliveries.Select(x => new DeliveryViewModel
+            {
+                Id = x.Id,
+                RequestId = x.Offer.RequestId,
+                ClientCompanyId = x.Offer.Request.ClientCompanyId,
+                ClientCompanyName = x.Offer.Request.ClientCompany.Name,
+                CargoType = x.Offer.Request.CargoType,
+                TotalCargos = (x.Offer.Request.StandartCargo?.NumberOfPallets ?? 0) + (x.Offer.Request.NumberOfNonStandartGoods ?? 0),
+                TotalVolume = x.Offer.Request.TotalVolume.ToString(),
+                TotalWeight = x.Offer.Request.TotalWeight.ToString(),
+                NumberOfNonStandartGoods = x.Offer.Request.NumberOfNonStandartGoods.ToString(),
+                TypeOfGoods = x.Offer.Request.TypeOfGoods,
+                PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
+                DeliveryAddress = $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}",
+                SharedTruck = x.Offer.Request.SharedTruck,
+                ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd/MM/yyyy"),
+                SpecialInstructions = x.Offer.Request.SpecialInstructions,
+                IsRefrigerated = x.Offer.Request.IsRefrigerated,
+                ReferenceNumber = x.ReferenceNumber,
+                IsPaid = x.Invoice.IsPaid
+            }).ToList();
+            return deliveriesToShow;
+        }
+
 
     }
 }
