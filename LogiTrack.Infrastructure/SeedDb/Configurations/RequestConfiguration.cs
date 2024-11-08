@@ -1,6 +1,7 @@
 ﻿using LogisticsSystem.Infrastructure.Data.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace LogiTrack.Infrastructure.SeedDb.Configurations
 {
@@ -29,9 +30,12 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.DeliveryAddress)
-                .WithOne()
-                .HasForeignKey<Request>(x => x.DeliveryAddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+    .WithOne()
+    .HasForeignKey<Request>(x => x.DeliveryAddressId)
+    .OnDelete(DeleteBehavior.Restrict);
+            builder
+    .Property(r => r.DeliveryAddressId)
+    .HasColumnName("DeliveryAddressId");
             var data = new SeedData();
             builder.HasData(new Request[] { data.Request1, data.Request2, data.Request3, data.Request4, data.Request5 });
         }

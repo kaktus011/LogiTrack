@@ -4,6 +4,7 @@ using LogiTrack.Infrastructure.SeedDb.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace LogiTrack.Infrastructure
 {
@@ -15,6 +16,7 @@ namespace LogiTrack.Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
             builder.ApplyConfiguration(new IdentityUserConfiguration());
             builder.ApplyConfiguration(new IdentityRolesConfiguration());
             builder.ApplyConfiguration(new IdentityUserRolesConfiguration());

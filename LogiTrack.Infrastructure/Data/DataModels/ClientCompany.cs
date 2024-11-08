@@ -59,13 +59,6 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         public Address Address { get; set; } = null!;
 
         [Required]
-        [Comment("Delivery address identifier")]
-        public int DeliveryAddressId { get; set; }
-
-        [ForeignKey(nameof(DeliveryAddressId))]
-        public Address DeliveryAddress { get; set; } = null!;
-
-        [Required]
         [Comment("Registration created at")]
         public DateTime CreatedAt { get; set; }
 
