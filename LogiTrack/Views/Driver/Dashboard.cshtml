@@ -1,6 +1,6 @@
-﻿﻿@model LogiTrack.Core.ViewModels.Driver.DriverDashboardViewModel
+﻿@model LogiTrack.Core.ViewModels.Driver.DriverDashboardViewModel
 @{
-	Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -18,7 +18,117 @@
 	<style>
 		body {
 			font-family: 'Roboto', sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 0;
 		}
+
+		.header {
+			display: flex;
+			align-items: center;
+			padding: 10px 20px;
+			background-color: white;
+			color: #00aa87;
+			border-bottom: 2px solid #00aa87;
+			transition: margin-left 0.3s ease;
+			position: relative;
+		}
+
+			.header.shifted {
+				margin-left: 250px;
+			}
+
+		.logo-name {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.company-logo img {
+			width: 50px;
+			height: 50px;
+		}
+
+		.company-name {
+			font-size: 1.5rem;
+		}
+
+		.profile-dropdown {
+			position: relative;
+			margin-left: auto;
+			z-index: 1000;
+		}
+
+		.profile-dropdown-menu {
+			display: none;
+			position: absolute;
+			right: 0;
+			background-color: white;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			border-radius: 5px;
+			overflow: hidden;
+			
+		}
+
+			.profile-dropdown-menu a {
+				display: block;
+				padding: 10px 20px;
+				color: #333;
+				text-decoration: none;
+			}
+
+				.profile-dropdown-menu a:hover {
+					background-color: #f4f4f4;
+				}
+
+		.profile-button {
+			display: flex;
+			align-items: center;
+			background: none;
+			border: none;
+			cursor: pointer;
+			color: #00aa87;
+			font-size: 1rem;
+			pointer-events: auto;
+		}
+
+			.profile-button .user-name,
+			.profile-button i {
+				margin-left: 5px;
+				margin-right: 5px;
+				pointer-events: none;
+			}
+
+			.profile-button:focus {
+				outline: none;
+			}
+
+		.sidebar {
+			width: 250px;
+			background-color: white;
+			color: #00aa87;
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100%;
+			padding-top: 60px;
+			border-right: 2px solid #00aa87;
+			transform: translateX(-100%);
+			transition: transform 0.3s ease;
+		}
+
+			.sidebar.closed {
+				transform: translateX(0);
+			}
+
+		.main-content {
+			margin: 20px;
+			transition: margin 0.3s ease;
+		}
+
+			.main-content.shifted {
+				margin-left: 270px;
+			}
 
 		.cards-container {
 			display: flex;
@@ -72,7 +182,7 @@
 		}
 
 		.card-button {
-			background-color: #1e87f0;
+			background-color: #00aa87;
 			padding: 3px 7px;
 			color: white;
 			border: none;
@@ -86,7 +196,7 @@
 		}
 
 			.card-button:hover {
-				background-color: #167ac4;
+				background-color: #008f6f;
 			}
 
 		.card-button-info {
@@ -102,7 +212,6 @@
 				opacity: 0.5;
 			}
 
-		/* Diagram Styles */
 		.diagrams {
 			display: flex;
 			gap: 20px;
@@ -130,7 +239,7 @@
 
 		.see-all {
 			text-decoration: underline;
-			color: #707070;
+			color: #00aa87;
 			font-size: 14px;
 		}
 
@@ -196,30 +305,46 @@
 			width: 90%;
 			text-decoration: none;
 		}
+
+		#menuButton {
+			background: none;
+			border: none;
+			font-size: 1.5rem;
+			color: #00aa87;
+			cursor: pointer;
+		}
+
+			#menuButton:focus {
+				outline: none;
+			}
 	</style>
 
 </head>
 
 <body>
-	<header class="header">
-		<div class="logo-name">
-			<div class="company-logo">
-				<img src="https://via.placeholder.com/50" alt="Company Logo">
-			</div>
-			<div class="company-name">LogiTrack</div>
-		</div>
-		<div class="profile-dropdown">
-			<button onclick="toggleDropdown()">
-				<i class="bi bi-person-circle"></i>
-				<span class="arrow">&#x25BC;</span>
-			</button>
-			<div class="profile-dropdown-menu" id="profileDropdown">
-				<a asp-action="Details" asp-controller="Driver">Personal details</a>
-				<a asp-action="LicenseDetails" asp-controller="Driver">License</a>
-				<a asp-action="Logout" asp-controller="Home">Logout</a>
-			</div>
-		</div>
-	</header>
+<header class="header">
+    <div class="logo-name">
+        <button id="menuButton" onclick="toggleSidebar()">☰</button>
+        <div class="company-logo">
+            <img src="https://placehold.co/50x50" alt="Company Logo">
+        </div>
+        <div class="company-name">LogiTrack</div>
+    </div>
+
+    <div class="profile-dropdown">
+        <button class="profile-button" onclick="toggleDropdown()">
+            <i class="bi bi-person-circle"></i>
+            @* <span class="user-name">@Model.Username</span> *@
+            <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="profile-dropdown-menu" id="profileDropdown">
+            <a asp-action="Details" asp-controller="Driver">Personal details</a>
+            <a asp-action="LicenseDetails" asp-controller="Driver">License</a>
+            <a asp-action="Logout" asp-controller="Home">Logout</a>
+        </div>
+    </div>
+</header>
+
 	<aside class="sidebar">
 		<ul>
 			<li><a asp-action="Dashboard" asp-controller="Driver"><i class="bi bi-house-door"></i> Dashboard</a></li>
@@ -238,10 +363,8 @@
 					<img src="https://via.placeholder.com/50" alt="Location Icon">
 				</div>
 				<div class="card-content">
-
 					<h3>LOCATION</h3>
 					<p id="location" style="font-size:0.9rem;">Fetching location...</p>
-					@*<p id="currentTime">Current Time: Fetching...</p>*@
 				</div>
 				<div class="card-button-info">
 					<button class="card-button" onclick="getCurrentLocation()">
@@ -251,7 +374,6 @@
 						</svg>
 					</button>
 				</div>
-
 			</div>
 			<div class="card">
 				<div class="card-icon">
@@ -264,7 +386,6 @@
 				<div class="card-button-info">
 					<a asp-action="SearchDeliveries" asp-controller="Driver" class="card-button"><b>SEE ALL</b></a>
 				</div>
-
 			</div>
 			<div class="card">
 				<div class="card-icon" style="background-color: orangered;">
@@ -277,9 +398,7 @@
 				<div class="card-button-info">
 					<p>@Model.KilometersDrivenlastMonth last month</p>
 				</div>
-
 			</div>
-
 		</div>
 		<div class="diagrams">
 			<div class="diagram">
@@ -301,19 +420,17 @@
 						<p class="client-company">@item.ClientCompanyName</p>
 					</div>
 				}
-
 			</div>
-
 			<div class="diagram">
-                <div class="diagram-header">
-                <h3>New Deliveries</h3>
-                <a asp-action="AllDeliveries" asp-asp-controller="Driver" class="see-all">See all</a>
-                </div>
+				<div class="diagram-header">
+					<h3>New Deliveries</h3>
+					<a asp-action="AllDeliveries" asp-controller="Driver" class="see-all">See all</a>
+				</div>
 				@foreach (var item in Model.NewDeliveries)
 				{
 					<div class="delivery">
 						<div class="delivery-info">
-							<a asp-action="DeliveryDetails" asp-asp-controller="Driver" asp-route-id="@item.Id" class="ref-num">@item.ReferenceNumber</a>
+							<a asp-action="DeliveryDetails" asp-controller="Driver" asp-route-id="@item.Id" class="ref-num">@item.ReferenceNumber</a>
 							<img src="~/dashboard_books_dots.svg" alt="Road" class="road-icon">
 							<div class="addresses">
 								<p class="pickup-address">@item.PickupAddress</p>
@@ -322,13 +439,40 @@
 						</div>
 						<p class="client-company">@item.ClientCompanyName</p>
 					</div>
-					<a asp-controller="Driver" asp-action="SearchDelivery" class="diagram-button"><b>Add status</b></a>
+					<a asp-controller="Driver" asp-action="SearchDelivery" class="diagram-button"><b>Add delivery</b></a>
 				}
 			</div>
 		</div>
 	</div>
 
 	<script>
+		function toggleSidebar() {
+			const sidebar = document.querySelector('.sidebar');
+			const mainContent = document.querySelector('.main-content');
+			const header = document.querySelector('.header');
+			sidebar.classList.toggle('closed');
+			mainContent.classList.toggle('shifted');
+			header.classList.toggle('shifted');
+		}
+
+		function toggleDropdown() {
+			const dropdown = document.getElementById('profileDropdown');
+			dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+		}
+
+		// Close the user menu if the user clicks outside of it
+		window.onclick = function (event) {
+			if (!event.target.matches('.profile-button')) {
+				const dropdowns = document.getElementsByClassName('profile-dropdown-menu');
+				for (let i = 0; i < dropdowns.length; i++) {
+					const openDropdown = dropdowns[i];
+					if (openDropdown.style.display === 'block') {
+						openDropdown.style.display = 'none';
+					}
+				}
+			}
+		}
+
 		async function getCurrentLocation() {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(showPosition, showError);
