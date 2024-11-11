@@ -192,15 +192,9 @@ namespace LogiTrack.Controllers
             return View(model);
         }
 
-		public async Task<IActionResult> AllDeliveries()
-		{
-			var username = "driver1@example.com";
-			if (await _driverService.DriverWithUsernameExistsAsync(username) == false)
-			{
-				return BadRequest(DriverNotFoundErrorMessage);
-			}
-			var model = await _deliveryService.GetDeliveriesForDriverAsync(username);
-			return View(model);
-		}
+        public IActionResult AllDeliveries()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
