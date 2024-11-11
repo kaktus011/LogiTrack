@@ -4,16 +4,17 @@
 @{
 }
 <aside class="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">×</button>
+    <br/>
+    <br/>
     <ul>
         <li><a asp-action="Dashboard" asp-controller="Driver"><i class="bi bi-house-door"></i> Dashboard</a></li>
-        <li>
-            <a asp-action="SearchDelivery" asp-controller="Driver"><i class="bi bi-journal"></i> New Delivery</a>
-        </li>
         <li>
             <a asp-action="SearchDeliveries" asp-controller="Driver"><i class="bi bi-truck"></i> Deliveries <span class="arrow">></span></a>
             <div class="dropdown-menu">
                 <ul>
                     <li><a asp-action="SearchDeliveries" asp-controller="Driver"><i class="bi bi-search"></i>Search</a></li>
+                    <li><a asp-action="SearchDelivery" asp-controller="Driver"><i class="bi bi-journal"></i> New Delivery</a></li>
                 </ul>
             </div>
         </li>

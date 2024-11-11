@@ -1,5 +1,22 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownToggles = document.querySelectorAll('.sidebar li > a');
+
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', (event) => {
+            const dropdownMenu = toggle.nextElementSibling;
+            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                event.preventDefault();
+                dropdownMenu.classList.toggle('show');
+            }
+        });
+    });
+
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.add('closed');
+})
+
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
@@ -8,6 +25,11 @@ function toggleSidebar() {
     mainContent.classList.toggle('shifted');
     header.classList.toggle('shifted');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.add('closed');
+});
 
 function toggleDropdown() {
     const dropdown = document.getElementById('profileDropdown');
