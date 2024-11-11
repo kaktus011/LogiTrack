@@ -3,7 +3,6 @@ using LogiTrack.Core.ViewModels.Driver;
 using LogiTrack.Core.ViewModels.Delivery;
 using LogiTrack.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using LogiTrack.Core.CustomExceptions;
 using LogiTrack.Core.Constants;
 using LogiTrack.Core.ViewModels.Accountant;
@@ -156,6 +155,7 @@ namespace LogiTrack.Core.Services
             await repository.AddAsync(deliveryTracking);
             await repository.SaveChangesAsync();
         }
+
         public async Task<List<DeliveryViewModel>?> GetDeliveriesForDriverAsync(string username, string? referenceNumber = null, DateTime? endDate = null, DateTime? startDate = null, string? deliveryAddress = null, string? pickupAddress = null, bool? isNew = null)
         {
             var deliveries = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>()
@@ -167,6 +167,12 @@ namespace LogiTrack.Core.Services
                 .Include(x => x.Offer)
                 .ThenInclude(x => x.Request)
                 .ThenInclude(x => x.ClientCompany)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.DeliveryAddress)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.PickupAddress)  // Include PickupAddress
                 .Where(x => x.Driver.User.UserName == username)
                 .ToListAsync();
 
@@ -174,7 +180,7 @@ namespace LogiTrack.Core.Services
             {
                 deliveries = deliveries.Where(x => x.DeliveryStep == 1).ToList();
             }
-            if (string.IsNullOrEmpty(referenceNumber) == false)
+            if (!string.IsNullOrEmpty(referenceNumber))
             {
                 deliveries = deliveries.Where(x => x.ReferenceNumber == referenceNumber).ToList();
             }
@@ -186,13 +192,17 @@ namespace LogiTrack.Core.Services
             {
                 deliveries = deliveries.Where(x => x.Offer.Request.ExpectedDeliveryDate >= startDate).ToList();
             }
-            if (string.IsNullOrEmpty(deliveryAddress))
+            if (!string.IsNullOrEmpty(deliveryAddress))
             {
-                deliveries = deliveries.Where(x => x.Offer.Request.DeliveryAddress.City.ToLower().Contains(deliveryAddress.ToLower()) || x.Offer.Request.DeliveryAddress.County.ToLower().Contains(deliveryAddress.ToLower()) || x.Offer.Request.DeliveryAddress.Street.ToLower().Contains(deliveryAddress.ToLower())).ToList();
+                deliveries = deliveries.Where(x => x.Offer.Request.DeliveryAddress.City.ToLower().Contains(deliveryAddress.ToLower())
+                    || x.Offer.Request.DeliveryAddress.County.ToLower().Contains(deliveryAddress.ToLower())
+                    || x.Offer.Request.DeliveryAddress.Street.ToLower().Contains(deliveryAddress.ToLower())).ToList();
             }
-            if (string.IsNullOrEmpty(pickupAddress))
+            if (!string.IsNullOrEmpty(pickupAddress))
             {
-                deliveries = deliveries.Where(x => x.Offer.Request.PickupAddress.City.ToLower().Contains(pickupAddress.ToLower()) || x.Offer.Request.PickupAddress.County.ToLower().Contains(pickupAddress.ToLower()) || x.Offer.Request.PickupAddress.Street.ToLower().Contains(pickupAddress.ToLower())).ToList();
+                deliveries = deliveries.Where(x => x.Offer.Request.PickupAddress.City.ToLower().Contains(pickupAddress.ToLower())
+                    || x.Offer.Request.PickupAddress.County.ToLower().Contains(pickupAddress.ToLower())
+                    || x.Offer.Request.PickupAddress.Street.ToLower().Contains(pickupAddress.ToLower())).ToList();
             }
 
             var deliveriesToShow = deliveries.Select(x => new DeliveryViewModel
@@ -217,16 +227,27 @@ namespace LogiTrack.Core.Services
             }).ToList();
             return deliveriesToShow;
         }
+
+
         public async Task<List<DeliveryViewModel>?> GetDeliveriesForDriverBySearchtermAsync(string username, string? searchTerm)
         {
             var deliveries = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>()
-               .Include(x => x.Vehicle)
-               .Include(x => x.Driver)
-               .Include(x => x.Offer)
-               .ThenInclude(x => x.Request)
-               .ThenInclude(x => x.ClientCompany)
-               .Where(x => x.Driver.User.UserName == username)
-               .ToListAsync();
+                .Include(x => x.Vehicle)
+                .Include(x => x.Driver)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.StandartCargo)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.ClientCompany)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.DeliveryAddress)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.PickupAddress)  // Include PickupAddress
+                .Where(x => x.Driver.User.UserName == username)
+                .ToListAsync();
 
             if (string.IsNullOrEmpty(searchTerm) == false)
             {
@@ -420,33 +441,37 @@ namespace LogiTrack.Core.Services
             }).ToList();
             return deliveriesToShow;
         }
-        public async Task<List<DeliveryViewModel>> GetDeliveriesForAccountantBySearchtermAsync(string? searchTerm = null)
+
+        public async Task<List<DeliveryViewModel>> GetDeliveriesForAccountantBySearchtermAsync(
+            string? searchTerm = null)
         {
             var deliveries = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>()
-              .Include(x => x.Vehicle)
-              .Include(x => x.Driver)
-              .Include(x => x.Offer)
-              .ThenInclude(x => x.Request)
-              .ThenInclude(x => x.ClientCompany)
-              .Include(x => x.Offer)
-              .ThenInclude(x => x.Request)
-              .ThenInclude(x => x.PickupAddress)
-              .Include(x => x.Offer)
-              .ThenInclude(x => x.Request)
-              .ThenInclude(x => x.DeliveryAddress)
-              .Include(x => x.Invoice)
-              .ToListAsync();
+                .Include(x => x.Vehicle)
+                .Include(x => x.Driver)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.ClientCompany)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.PickupAddress)
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.DeliveryAddress)
+                .Include(x => x.Invoice)
+                .ToListAsync();
             if (string.IsNullOrEmpty(searchTerm) == false)
             {
-                deliveries = deliveries.Where(x => x.Offer.Request.ClientCompany.Name.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.DeliveryAddress.City.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.DeliveryAddress.County.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.DeliveryAddress.Street.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.PickupAddress.City.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.PickupAddress.County.ToLower().Contains(searchTerm.ToLower())
-                               || x.Offer.Request.PickupAddress.Street.ToLower().Contains(searchTerm.ToLower())
-                               || x.ReferenceNumber.ToLower().Contains(searchTerm.ToLower())).ToList();
+                deliveries = deliveries.Where(x =>
+                    x.Offer.Request.ClientCompany.Name.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.DeliveryAddress.City.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.DeliveryAddress.County.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.DeliveryAddress.Street.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.PickupAddress.City.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.PickupAddress.County.ToLower().Contains(searchTerm.ToLower())
+                    || x.Offer.Request.PickupAddress.Street.ToLower().Contains(searchTerm.ToLower())
+                    || x.ReferenceNumber.ToLower().Contains(searchTerm.ToLower())).ToList();
             }
+
             var deliveriesToShow = deliveries.Select(x => new DeliveryViewModel
             {
                 Id = x.Id,
@@ -454,13 +479,16 @@ namespace LogiTrack.Core.Services
                 ClientCompanyId = x.Offer.Request.ClientCompanyId,
                 ClientCompanyName = x.Offer.Request.ClientCompany.Name,
                 CargoType = x.Offer.Request.CargoType,
-                TotalCargos = (x.Offer.Request.StandartCargo?.NumberOfPallets ?? 0) + (x.Offer.Request.NumberOfNonStandartGoods ?? 0),
+                TotalCargos = (x.Offer.Request.StandartCargo?.NumberOfPallets ?? 0) +
+                              (x.Offer.Request.NumberOfNonStandartGoods ?? 0),
                 TotalVolume = x.Offer.Request.TotalVolume.ToString(),
                 TotalWeight = x.Offer.Request.TotalWeight.ToString(),
                 NumberOfNonStandartGoods = x.Offer.Request.NumberOfNonStandartGoods.ToString(),
                 TypeOfGoods = x.Offer.Request.TypeOfGoods,
-                PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
-                DeliveryAddress = $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}",
+                PickupAddress =
+                    $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
+                DeliveryAddress =
+                    $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}",
                 SharedTruck = x.Offer.Request.SharedTruck,
                 ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd/MM/yyyy"),
                 SpecialInstructions = x.Offer.Request.SpecialInstructions,
@@ -470,7 +498,5 @@ namespace LogiTrack.Core.Services
             }).ToList();
             return deliveriesToShow;
         }
-
-
     }
 }
