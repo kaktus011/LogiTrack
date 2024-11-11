@@ -13,12 +13,22 @@ html {
   min-height: 100%;
 }
 
+/* Global Body Styles */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
 }
+
+.main-content {
+    margin: 20px;
+    transition: margin 0.3s ease;
+}
+
+    .main-content.shifted {
+        margin-left: 270px;
+    }
 
 /* Global Header Styles */
 .header {

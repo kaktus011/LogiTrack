@@ -27,42 +27,6 @@ window.onclick = function (event) {
     }
 }
 
-async function getCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        document.getElementById('location').textContent = "Geolocation is not supported by this browser.";
-    }
-}
-
-function showPosition(position) {
-    const lat = position.coords.latitude;
-    const long = position.coords.longitude;
-    fetchLocation(lat, long);
-}
-
-async function fetchLocation(lat, long) {
-    const apiKey = 'test';
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.results && data.results.length > 0) {
-            const address = data.results[0].formatted_address;
-            document.getElementById('location').textContent = address;
-        } else {
-            document.getElementById('location').textContent = "Unable to retrieve location.";
-        }
-    } catch (error) {
-        console.error("Error fetching location:", error);
-        document.getElementById('location').textContent = "Error fetching location.";
-    }
-
-    showCurrentTime();
-}
-
 function showCurrentTime() {
     const now = new Date();
     const options = { timeZone: 'Europe/Sofia', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
@@ -86,5 +50,3 @@ function showError(error) {
             break;
     }
 }
-
-window.onload = getCurrentLocation;
