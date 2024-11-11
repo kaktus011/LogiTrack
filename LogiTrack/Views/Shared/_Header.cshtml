@@ -1,0 +1,26 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<header class="header">
+    <div class="logo-name">
+        <div class="company-logo">
+            <img src="https://via.placeholder.com/50" alt="Company Logo">
+        </div>
+        <button id="menuButton" onclick="toggleSidebar()">☰</button>
+        <div class="company-name">LogiTrack</div>
+    </div>
+    <div class="profile-dropdown">
+        <button class="profile-button" onclick="toggleDropdown()">
+            <i class="bi bi-person-circle"></i>
+            @* <span class="user-name">@Model.Username</span> *@
+            <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="profile-dropdown-menu" id="profileDropdown">
+            <a asp-action="Details" asp-controller="Driver">Personal details</a>
+            <a asp-action="LicenseDetails" asp-controller="Driver">License</a>
+            <a asp-action="Logout" asp-controller="Home">Logout</a>
+        </div>
+    </div>
+</header>
