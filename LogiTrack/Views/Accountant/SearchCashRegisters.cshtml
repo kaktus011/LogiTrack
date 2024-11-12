@@ -1,0 +1,321 @@
+﻿@model LogiTrack.Core.ViewModels.Accountant.SearchCashRegistersViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Cash Registers</title>
+    
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        .container {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 96.5%;
+        }
+
+        .quick-search-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-icon {
+            margin-right: 10px;
+        }
+
+        .quick-search-title {
+            font-size: 22px;
+            color: #00aa87;
+            margin-bottom: 15px;
+            margin: 0;
+        }
+
+        .search-description {
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: grey;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 20px;
+            flex-direction: row;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1 1 33%;
+            margin-bottom: 10px;
+        }
+
+            .form-group:last-child {
+                margin-right: 0;
+            }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 80%;
+            border: none;
+            border-bottom: 1px solid grey;
+            padding: 8px 0;
+            margin-bottom: 15px;
+        }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus {
+                outline: none;
+                border-bottom-color: #00aa87;
+            }
+
+        .button-group {
+            display: flex;
+            margin-top: 45px;
+            flex-direction: row;
+            margin-bottom: 30px;
+            gap: 7px;
+        }
+
+        .btn {
+            background-color: #00aa87;
+            width: 110px;
+            height: 35px;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-left: 10px;
+            box-shadow: 0 3px 1px -2px #0003, 0 2px 2px 0 #00000024, 0 1px 5px 0 #0000001f;
+        }
+
+            .btn:hover {
+                opacity: 0.9;
+            }
+
+        .btn-clear {
+            width: 80px;
+            text-align: center;
+            height: 15px;
+            text-decoration: none;
+            background-color: white;
+            color: #00aa87;
+            border: 1px solid #00aa87;
+            border-radius: 3px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 13px;
+        }
+
+            .btn-clear:hover {
+                opacity: 0.8;
+            }
+
+        .filtered-item-container {
+            background-color: #ffff;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-search-form {
+            padding-top: 20px;
+            margin-left: 20px;
+        }
+
+            .quick-search-form .form-group {
+                width: 55%;
+            }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            background-color: #ffffff;
+            padding: 30px;
+            font-weight: bold;
+            font-size: 0.90rem;
+            width: 90%;
+        }
+
+        .item-card {
+            background-color: white;
+            font-size: 0.80rem;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .item-card:nth-child(even) {
+                background-color: #F5F5F7;
+            }
+
+        .item-info {
+            display: flex;
+            width: 90%;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            margin-top: 28px;
+            margin-left: 30px;
+            height: 5px;
+        }
+
+        .file-icon {
+            color: #007bff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .file-icon i {
+                font-size: 1.2em;
+                margin-right: 5px;
+            }
+
+            .file-icon:hover {
+                color: #0056b3;
+            }
+
+        .no-found {
+            padding: 15px;
+            color: #00aa87;
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <partial name="_Header" />
+    <partial name="Sidebars/_Sidebar-Accountant" />
+
+    <div class="main-content">
+        <div class="container mt-5">
+            <div class="quick-search-header">
+                <img src="~/search_logo.png" alt="Quick Search Icon" class="search-icon" style="width: 50px; height: 50px;">
+                <h2 class="quick-search-title">Quick Search</h2>
+            </div>
+            <p class="search-description">Please enter your search criteria</p>
+
+            <form asp-action="SearchCashRegisters" asp-controller="Accountant" method="get" class="search-form">
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="DeliveryReferenceNumber"><b>Ref No</b></label>
+                        <input type="text" id="ReferenceNumber" asp-for="DeliveryReferenceNumber" placeholder="Please enter">
+                        <span asp-validation-for="DeliveryReferenceNumber"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CompanyName"><b>Client</b></label>
+                        <input type="text" id="CompanyName" asp-for="CompanyName" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate"><b>Start</b></label>
+                        <input type="date" id="StartDate" asp-for="StartDate" class="flatpickr" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndDate"><b>End</b></label>
+                        <input type="date" id="EndDate" class="flatpickr" asp-for="EndDate" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Type">Type</label>
+                        <input asp-for="Type" placeholder="Please enter or select" list="typeOptions" class="form-control" />
+                        <datalist id="typeOptions">
+                            <option value="Vehicle"></option>
+                            <option value="Driver"></option>
+                            <option value="Other"></option>
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <div class="button-group">
+                        <button type="submit" class="btn"><b>GO</b></button>
+                        <a asp-action="SearchCashRegisters" asp-controler="Accountant" type="reset" class="btn btn-clear"><b>CLEAR</b></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="filtered-items-container">
+            <form asp-action="SearchCashRegisters" asp-controller="Accountant" method="get" class="quick-search-form">
+                <div class="form-group">
+                    <input type="text" id="keyword" asp-for="SearchTerm" placeholder="Enter keyword">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <div class="item-header">
+                <span>Date</span>
+                <span>Delivery Ref No</span>
+                <span>Type</span>
+                <span>Description</span>
+                <span>Amount</span>
+                <span>File</span>
+            </div>
+            @if (Model.CashRegisters.Any())
+            {
+                @foreach (var cashRegister in Model.CashRegisters)
+                {
+                    <div class="item-card">
+                        <div class="item-info">
+                            <span>@cashRegister.DateSubmitted</span>
+                            <span>@cashRegister.DeliveryReferenceNumber</span>
+                            <span>@cashRegister.Type</span>
+                            <span class="description">@cashRegister.Description</span>
+                            <span>@cashRegister.Amount</span>
+                            <div class="cell">
+                                <a href="@cashRegister.FileUrl" target="_blank" class="file-icon" title="View or Download File">
+                                    <i class="fas fa-file-download"></i> See
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+            }
+            else
+            {
+                <p class="no-found">No cash registers found matching the search criteria.</p>
+            }
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr(".flatpickr", {
+                dateFormat: "Y-m-d",
+            });
+        });
+    </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+</body>
+
+</html>
