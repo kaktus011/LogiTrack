@@ -163,7 +163,7 @@ namespace LogiTrack.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> DriverDetails()
         {
             var username = "driver1@example.com";
             if (await driverService.DriverWithUsernameExistsAsync(username) == false)

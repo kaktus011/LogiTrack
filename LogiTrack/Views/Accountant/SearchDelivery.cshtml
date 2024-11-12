@@ -1,8 +1,8 @@
-﻿@model LogiTrack.Core.ViewModels.Delivery.SearchDeliveryByReferenceNumberViewModel
+﻿@model LogiTrack.Core.ViewModels.Accountant.SearchDeliveryByReferenceNumberViewModel
 @{
     Layout = null;
 }
-
+   
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,6 +49,27 @@
             margin-bottom: 15px;
         }
 
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 200;
+        }
+
+        input[type="text"] {
+            width: 25%;
+            border: none;
+            border-bottom: 1.4px solid grey;
+            padding: 8px 0;
+            margin-bottom: 15px;
+        }
+
+            input[type="text"]:focus {
+                outline: none;
+                border-bottom-color: #00aa87;
+            }
+
+
         .form-control {
             width: 50%;
             padding: 10px;
@@ -71,28 +92,6 @@
                 box-shadow: 0 3px 1px -2px #0003, 0 2px 2px 0 #00000024, 0 1px 5px 0 #0000001f;
             }
 
-        label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 5px;
-            font-weight: 200;
-        }
-
-        input[type="text"],
-        input[type="date"] {
-            width: 25%;
-            border: none;
-            border-bottom: 1.4px solid grey;
-            padding: 8px 0;
-            margin-bottom: 15px;
-        }
-
-            input[type="text"]:focus,
-            input[type="date"]:focus {
-                outline: none;
-                border-bottom-color: #00aa87;
-            }
-
         .alert {
             padding: 15px;
             margin-bottom: 20px;
@@ -111,12 +110,12 @@
 
 <body>
     <partial name="_Header" />
-    <partial name="Sidebars/_Sidebar-Driver" />
+    <partial name="Sidebars/_Sidebar-Accountant" />
 
     <div class="main-content">
         <div class="search-delivery">
             <div class="search-header">
-                <img src="https://via.placeholder.com/40" alt="Search Icon" class="search-icon">
+                <img src="~/search_logo.png" alt="Quick Search Icon" class="search-icon" style="width: 50px; height: 50px;">
                 <h2 class="search-title"><b>Search delivery</b></h2>
             </div>
 
@@ -129,14 +128,7 @@
                 </div>
             }
 
-            @if (TempData["NotAuthorize"] != null)
-            {
-                <div class="alert alert-danger">
-                    You are not authorized to view this delivery!
-                </div>
-            }
-
-            <form asp-action="SearchDelivery" asp-controller="Driver" method="post">
+            <form asp-action="SearchDelivery" asp-controller="Accountant" method="post">
                 <div class="form-group">
                     <label asp-for="ReferenceNumber"><b>Reference number</b></label>
                     <input asp-for="ReferenceNumber" type="text" id="ReferenceNumber" class="form-control" placeholder="Please enter" />
@@ -150,6 +142,6 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-</body>
+ </body>
 
 </html>
