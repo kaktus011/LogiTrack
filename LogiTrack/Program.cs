@@ -31,6 +31,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<GeocodingService>();
+builder.Services.AddScoped<IHomeService, HomeService>();    
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 var app = builder.Build();
 

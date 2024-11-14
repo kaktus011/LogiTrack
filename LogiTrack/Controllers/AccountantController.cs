@@ -1,9 +1,11 @@
 ﻿using LogiTrack.Core.Contracts;
 using LogiTrack.Core.CustomExceptions;
-using LogiTrack.Core.ViewModels.Accountant;
 using static LogiTrack.Core.Constants.MessageConstants.ErrorMessages;
 using Microsoft.AspNetCore.Mvc;
-using LogiTrack.Core.Constants;
+using LogiTrack.Core.ViewModels.Invoice;
+using LogiTrack.Core.ViewModels.CashRegister;
+using LogiTrack.Core.ViewModels.Delivery;
+using LogiTrack.Core.ViewModels.Accountant;
 
 namespace LogiTrack.Controllers
 {
@@ -46,7 +48,7 @@ namespace LogiTrack.Controllers
             {
                 return View(model);
             }
-            var deliveryId = await deliveryService.GetDeliveryByReferenceNumberAsync(model.ReferenceNumber);
+            var deliveryId = await deliveryService.GetDeliveryByReferenceNumberForAccountantAsync(model.ReferenceNumber);
             if (deliveryId == default)
             {
                 TempData["NotFound"] = DeliveryNotFoundErrorMessage;
@@ -84,7 +86,7 @@ namespace LogiTrack.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCashRegister(int id, AddCashRegisterViewModel model, IFormFile file)
         {
- 
+
             if (ModelState.IsValid == false)
             {
                 return View(model);
@@ -98,7 +100,7 @@ namespace LogiTrack.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -118,6 +120,7 @@ namespace LogiTrack.Controllers
                 return NotFound(ex.Message);
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> SearchInvoices([FromQuery] SearchInvoicesViewModel query)
         {
@@ -132,8 +135,9 @@ namespace LogiTrack.Controllers
                 return NotFound(ex.Message);
             }
         }
+
         [HttpGet]
-        public async Task<IActionResult> SearchDeliveries([FromQuery] SearchDeliveryViewModel query)
+        public async Task<IActionResult> SearchDeliveries([FromQuery] SearchDeliveryForAccountantViewModel query)
         {
             var model = await deliveryService.GetDeliveryForAccountantAsync(query.ReferenceNumber, query.EndDate, query.StartDate, query.ClientCompanyName, query.IsPaid);
             query.Deliveries = model;
@@ -152,9 +156,11 @@ namespace LogiTrack.Controllers
             var model = await invoiceService.GetInvoiceForPaymentAsync(id);
             return View(model);
         }
+
+        [HttpPost]
         public async Task<IActionResult> MarkAsPaidSuccessful(int id)
         {
-            if(await invoiceService.InvoiceWithIdExistsAsync(id) == false)
+            if (await invoiceService.InvoiceWithIdExistsAsync(id) == false)
             {
                 return NotFound(InvoiceNotFoundErrorMessage);
             }

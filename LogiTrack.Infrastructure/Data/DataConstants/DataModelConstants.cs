@@ -182,5 +182,10 @@
             public const double LongitudeMaxValue = 180.0;
             public const double LongitudeMinValue = -180.0;
         }
+        public static class SearchTerm
+        {
+            public const int SearchTermMaxLength = 20;
+            public const int SearchTermMinLength = 0;
+        }
     }
 }

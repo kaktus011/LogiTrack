@@ -12,6 +12,8 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Comment("Vehicle identifier")]
         public int Id { get; set; }
 
+        public bool IsRefrigerated { get; set; }
+
         [Required]
         [Comment("Vehicle registration number")]
         [StringLength(RegistartionNumberMaxLength)]
@@ -45,7 +47,7 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Required]
         [Comment("Euro pallets capacity")]
         [Range(PalletCapacityMinValue, PalletCapacityMaxValue)]
-        public int EuroPalletCapacity { get; set; } 
+        public int EuroPalletCapacity { get; set; }
 
         [Required]
         [Comment("Industrial pallets capacity")]
@@ -79,8 +81,10 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Range(KilometersMinValue, KilometersMaxValue)]
         public double KilometersDriven { get; set; }
 
-        [Comment("Kilometers left to change parts")]
+        [Comment("Kilometers to change parts")]
         [Range(KilometersMinValue, KilometersMaxValue)]
+        public double KilometersToChangeParts { get; set; }
+
         public double KilometersLeftToChangeParts { get; set; }
 
         [Comment("Vehicle's delivery")]
