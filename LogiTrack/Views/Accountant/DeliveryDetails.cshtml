@@ -11,227 +11,227 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Details</title>
 
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=test"></script>
 
     <style>
-        .delivery-details-container {
-            width: 85%;
+        .main-content.shifted {
+            margin-left: 270px;
+        }
+
+        .header.shifted {
+            margin-left: 250px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .card {
-            box-shadow: 0 0 25px 1px #0000000f !important;
-            padding: 17px;
-            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .details-header {
             display: flex;
             align-items: center;
-            margin-bottom: 40px;
+            gap: 20px;
         }
-
-            .details-header h2 {
-                font-size: 19px;
-                margin: 0;
-            }
 
         .delivery-image {
-            width: 50px;
-            height: auto;
-            margin-right: 20px;
-        }
-
-        h4 {
-            margin: 10px 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .button-tabs {
             display: flex;
-            border-bottom: 1px solid grey;
-            margin-bottom: 15px;
-        }
-
-        .tab-button {
-            padding: 10px 30px;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 15px;
-            transition: background-color 0.3s;
-            color: black;
-            background-color: white;
-        }
-
-            .tab-button:focus,
-            .tab-button:active {
-                border-bottom: 2px solid #00aa87;
-            }
-
-        .btn {
-            color: grey;
-            border: none;
-            cursor: pointer;
-            margin: 0 5px;
-            transition: background-color 0.3s;
-        }
-
-        .section {
-            display: none;
-            margin-left: 25px;
-        }
-
-            .section:not(.d-none) {
-                display: block;
-            }
-
-        .vehicle-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-            .column h5 {
-                margin-bottom: 10px;
-            }
-
-            .column p {
-                margin: 5px 0;
-                font-size: 14px;
-                color: black;
-                opacity: 80%;
-            }
-
-            .column strong {
-                color: black;
-            }
-
-        .maps-container {
-            display: flex;
-            gap: 20px;
+            gap: 10px;
             margin-top: 20px;
         }
 
-        .map {
-            width: 90%;
-            height: 200px;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .address-steps {
-            display: flex;
-            justify-content: space-between;
-            flex-direction: row;
+            .tab-button.active,
+            .tab-button:hover {
+                background-color: #e9ecef;
+            }
+
+        .section {
+            margin-top: 20px;
         }
+
+        .vehicles-section-header,
+        .addresses-container,
+        .metrics-container,
+        .status-container {
+            margin-top: 20px;
+        }
+
+        .addresses-container,
+        .metrics-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .address-column,
+        .metrics-column {
+            flex: 1 1 calc(33.333% - 20px);
+            box-sizing: border-box;
+        }
+
         .delivery-steps {
             display: flex;
-            align-items: center;
-            gap: 30px;
+            justify-content: space-between;
+            margin-top: 20px;
+            position: relative;
         }
 
         .step-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            flex: 1;
+            position: relative;
         }
 
         .step-dot {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: gray;
+            background-color: #ddd;
+            position: relative;
+            z-index: 1;
         }
 
             .step-dot.completed {
-                background-color: green;
+                background-color: #28a745;
             }
 
         .step-line {
-            width: 3px;
-            height: 50px;
-            background-color: gray;
-            margin: 0 auto;
+            position: relative;
+            top: -10%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 0;
+            transform: translateX(-50%);
         }
 
             .step-line.completed {
-                background-color: green;
+                background-color: #28a745;
             }
 
         .step-text {
+            margin-top: 10px;
             text-align: center;
-            margin-top: 8px;
         }
 
-            .step-text img {
-                width: 30px;
-                height: 30px;
-            }
-
-
-        .vehicles-section-header, .column h4 {
-            display: flex;
-            margin-bottom: 20px;
-            flex-direction: row;
+        .step-icon {
+            width: 48px;
+            height: 48px;
         }
 
-            .vehicles-section-header h4,
-            .column h4, .metrics-header h4, .special-instructions h4,
-             .metrics h4, .cash-register-title {
-                font-size: 20px;
-                color: #00aa87;
-                font-weight: 500;
-            }
-
-        .metrics-header {
-            display: flex;
-            flex-direction: row;
-            gap: 300px;
-            margin-bottom: 20px;
-        }
-
-        .metrics {
-            margin-top: 50px;
-        }
-
-        .standart-metrics-header-row {
-            display: flex;
-            flex-direction: row;
-            margin-left: 60px;
-            justify-content: space-between;
-            width: 90%;
-        }
-
-        .standart-metrics-info-row {
-            display: flex;
-            flex-direction: row;
-            background-color: #fbfbfb;
-            margin-left: 40px;
-            justify-content: space-between;
-            white-space: nowrap;
-            font-weight: 300;
-            font-size: 14px;
-            opacity: 80%;
-            width: 90%;
-        }
-
-        .invoices, .cash-registers {
+        .movement-history {
             margin-top: 20px;
         }
-      
-        h2 {
-            font-size: 24px;
-            margin: 0;
+
+        .movement-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
+
+        .movement-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .movement-event {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .movement-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #28a745;
+        }
+
+        .event-line {
+            width: 2px;
+            height: 20px;
+            background-color: #28a745;
+        }
+
+        .add-status-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 5px;
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            color: #000;
+        }
+
+            .add-status-button:hover {
+                background-color: #e9ecef;
+            }
+
+        .cash-register-title-button {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+            .cash-register-title-button a {
+                color: white;
+                background-color: #00aa87;
+                text-decoration: none;
+                padding: 3px;
+                border-radius: 5px;
+            }
+
+        .standart-metrics-header-row,
+        .standart-metrics-info-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px;
+        }
+
+            .standart-metrics-header-row p,
+            .standart-metrics-info-row p {
+                flex: 1;
+                text-align: center;
+            }
 
         .file-icon {
             color: #007bff;
@@ -249,20 +249,14 @@
                 color: #0056b3;
             }
 
-
-        .cash-register-title-button {
+        .vehicle-driver-container {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            width: 85%;
+            gap: 20px;
         }
 
-        .cash-register-title-button a{
-            color:white;
-            background-color: #00aa87;
-            text-decoration: none;
-            padding: 3px;
-            border-radius: 5px;
+        .vehicle-column,
+        .driver-column {
+            flex: 1;
         }
     </style>
 
@@ -270,22 +264,22 @@
 
 <body>
     <partial name="_Header" />
-    <partial name="Sidebars/_Sidebar-Accountant"/>
+    <partial name="Sidebars/_Sidebar-Accountant" class="sidebar" />
 
     <div class="main-content">
-        <div class="delivery-details-container">
+        <div class="cards-container">
             <div class="card">
                 <div class="details-header">
-                    <img src="https://via.placeholder.com/100" alt="Delivery Image" class="delivery-image">
+                    <img src="~/shipping_box.png" alt="Delivery Image" class="delivery-image">
                     <h2><b>@Model.ReferenceNumber</b></h2>
                 </div>
 
                 <div class="button-tabs">
-                    <button class="tab-button" id="infoBtn">INFO</button>
-                    <button class="tab-button" id="vehicleBtn">VEHICLE/DRIVER</button>
-                    <button class="tab-button" id="statusBtn">STATUS</button>
-                    <button class="tab-button" id="invoicesBtn">INVOICES</button>
-                    <button class="tab-button" id="cashRegistersBtn">CASH REGISTERS</button>
+                    <button class="btn tab-button" data-section="infoSection" id="infoBtn">INFO</button>
+                    <button class="btn tab-button" data-section="vehicleSection" id="vehicleBtn">VEHICLE/DRIVER</button>
+                    <button class="btn tab-button" data-section="statusSection" id="statusBtn">STATUS</button>
+                    <button class="btn tab-button" data-section="invoicesSection" id="invoicesBtn">INVOICES</button>
+                    <button class="btn tab-button" data-section="cashRegistersSection" id="cashRegistersBtn">CASH REGISTERS</button>
                 </div>
 
                 <div id="infoSection" class="section">
@@ -297,17 +291,22 @@
                         <p><strong>Email:</strong> @Model.ClientEmail</p>
                     </div>
                 </div>
-                <div id="vehicleSection" class="section d-none">
 
-                    <div class="vehicle-container">
-                        <div class="column">
-                            <h4><b>Vehicle</b></h4>
+                <div id="vehicleSection" class="section d-none">
+                    <div class="vehicle-driver-container">
+                        <div class="vehicle-column">
+                            <div class="vehicles-section-header">
+                                <img src="~/delivery_van_icon.png" alt="Vehicle Image" class="delivery-image">
+                                <h4>Vehicle details</h4>
+                            </div>
                             <p><strong>Type:</strong> @Model.VehicleType</p>
                             <p><strong>Registration:</strong> @Model.RegistrationNumber</p>
                         </div>
-
-                        <div class="column">
-                            <h4><b>Driver</b></h4>
+                        <div class="driver-column">
+                            <div class="vehicles-section-header">
+                                <img src="~/user_icon.png" alt="Driver Image" class="delivery-image">
+                                <h4>Driver details</h4>
+                            </div>
                             <p><strong>Name:</strong> @Model.Name</p>
                             <p><strong>Age:</strong> @Model.Age</p>
                             <p><strong>Salary:</strong> @Model.Salary</p>
@@ -317,74 +316,74 @@
                 </div>
 
                 <div id="statusSection" class="section d-none">
-                    <div class="address-steps">
-                        <div class="column-section">
-                            <div class="column">
-                                <h4><b>Origin</b></h4>
-                                <p>@Model.PickupAddress</p>
-                            </div>
-                            <div class="column">
-                                <h4><b>Destination</b></h4>
-                                <p>@Model.DeliveryAddress</p>
-                            </div>
-                        </div>
+                    <h6>Current Time: <span id="currentTime"></span></h6>
 
-                        <div class="delivery-steps">
-                            @{
-                                var steps = new[] { "Booked", "Collected", "In Transit", "Delivered" };
-                                var currentStep = Model.DeliveryStep;
-                            }
+                    <div class="delivery-steps">
+                        @{
+                            var steps = new[] { "Booked", "Collected", "In Transit", "Delivered" };
+                            var currentStep = Model.DeliveryStep;
+                        }
 
-                            @for (int i = 0; i < steps.Length; i++)
-                            {
-                                var isCompleted = i + 1 <= currentStep;
-                                var dotClass = isCompleted ? "step-dot completed" : "step-dot";
-                                var lineClass = i < steps.Length - 1 ? (isCompleted ? "step-line completed" : "step-line") : "";
+                        @for (int i = 0; i < steps.Length; i++)
+                        {
+                            var isCompleted = i + 1 <= currentStep;
+                            var dotClass = isCompleted ? "step-dot completed" : "step-dot";
+                            var lineClass = i < steps.Length - 1 ? (isCompleted ? "step-line completed" : "step-line") : "";
 
-                                <div class="step-container">
-                                    <div class="@dotClass"></div>
-                                    @if (i < steps.Length - 1)
-                                    {
-                                        <div class="@lineClass"></div>
-                                    }
+                            <div class="step-container">
+                                <div class="@dotClass"></div>
+                                @if (i < steps.Length - 1)
+                                {
+                                    <div class="@lineClass"></div>
+                                }
+                                <div class="step-text">
+                                    <img src="~/@steps[i].ToLower().Replace(" ", "_")_icon.png" alt="@steps[i] Icon" class="step-icon">
                                     <p>@steps[i]</p>
                                 </div>
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
                 </div>
 
-                <div id="invoicesSection" class="section d-none invoices">
-                    <div class="column">
-                        <div class="cash-register-title-button">
-                            <div class="cash-register-title">Invoices</div>
-                            @if (!Model.Invoice.IsPaid)
-                            {
-                                <a asp-action="MarkAsPaid" asp-controller="Accountant" asp-route-id="@Model.Id" class="btn btn-primary">Mark as Paid</a>
-                            }
+                <div id="invoicesSection" class="section d-none">
+                    <div class="metrics-container">
+                        <div class="metrics-column">
+                            <h5>Invoice Number</h5>
+                            <p><strong>Number:</strong> @Model.Invoice.Number</p>
                         </div>
-                    </div>
-                    <div class="standart-metrics-header-row">
-                        <p><b>Number</b></p>
-                        <p><b>Date</b></p>
-                        <p><b>Description</b></p>
-                        <p><b>Status</b></p>
-                        <p><b>File</b></p>
-                    </div>
-                    <div class="standart-metrics-info-row">
-                        <p>@Model.Invoice.Number</p>
-                        <p>@Model.Invoice.Date</p>
-                        <p>@Model.Invoice.Description</p>
-                        <p>@Model.Invoice.IsPaid</p>
-                        <p>
-                            <a href="@Model.Invoice.FileUrl" target="_blank" class="file-icon" title="View or Download File">
-                                <i class="fas fa-file-download"></i> See
-                            </a>
-                        </p>
+                        <div class="metrics-column">
+                            <h5>Invoice Date</h5>
+                            <p><strong>Date:</strong> @Model.Invoice.Date</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Description</h5>
+                            <p><strong>Description:</strong> @Model.Invoice.Description</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Status</h5>
+                            <p><strong>Status:</strong> @Model.Invoice.IsPaid</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>File</h5>
+                            <p>
+                                <a href="@Model.Invoice.FileUrl" target="_blank" class="file-icon" title="View or Download File">
+                                    <i class="fas fa-file-download"></i> See
+                                </a>
+                            </p>
+                        </div>
+                        @if (!Model.Invoice.IsPaid)
+                        {
+                            <div class="metrics-column">
+                                <h5>Action</h5>
+                                <p>
+                                    <a asp-action="MarkAsPaid" asp-controller="Accountant" asp-route-id="@Model.Id" class="btn btn-primary">Mark as Paid</a>
+                                </p>
+                            </div>
+                        }
                     </div>
                 </div>
 
-                <div id="cashRegistersSection" class="section d-none cash-registers">
+                <div id="cashRegistersSection" class="section d-none">
                     <div class="cash-register-title-button">
                         <div class="cash-register-title"><b>Cash registers</b></div>
                         <a asp-action="AddCashRegister" asp-controller="Accountant" asp-route-id="@Model.Id" class="btn btn-primary">ADD</a>
@@ -408,13 +407,11 @@
                                     <i class="fas fa-file-download"></i> See
                                 </a>
                             </p>
-
                         </div>
                     }
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -438,7 +435,13 @@
             function showSection(sectionId) {
                 $('.section').addClass('d-none');
                 $(sectionId).removeClass('d-none');
+                $('.tab-button').removeClass('active');
+                $(`[data-section="${sectionId.replace('#', '')}"]`).addClass('active');
             }
+
+            setInterval(() => {
+                document.getElementById("currentTime").innerText = new Date().toLocaleString();
+            }, 1000);
         });
     </script>
 

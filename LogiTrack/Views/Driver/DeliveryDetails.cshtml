@@ -15,125 +15,225 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=test"></script>
+
+    <style>
+        .main-content.shifted {
+            margin-left: 270px;
+        }
+
+        .header.shifted {
+            margin-left: 250px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .delivery-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .button-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .tab-button.active,
+            .tab-button:hover {
+                background-color: #e9ecef;
+            }
+
+        .section {
+            margin-top: 20px;
+        }
+
+        .vehicles-section-header,
+        .addresses-container,
+        .metrics-container,
+        .status-container {
+            margin-top: 20px;
+        }
+
+        .addresses-container,
+        .metrics-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .address-column,
+        .metrics-column {
+            flex: 1 1 calc(33.333% - 20px);
+            box-sizing: border-box;
+        }
+
+        .delivery-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ddd;
+            position: relative;
+            z-index: 1;
+        }
+
+            .step-dot.completed {
+                background-color: #28a745;
+            }
+
+        .step-line {
+            position: relative;
+            top: -10%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 0;
+            transform: translateX(-50%);
+        }
+
+            .step-line.completed {
+                background-color: #28a745;
+            }
+
+        .step-text {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .movement-history {
+            margin-top: 20px;
+        }
+
+        .movement-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .movement-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .movement-event {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .movement-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #28a745;
+        }
+
+        .event-line {
+            width: 2px;
+            height: 20px;
+            background-color: #28a745;
+        }
+
+        .add-status-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 5px;
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            color: #000;
+        }
+
+            .add-status-button:hover {
+                background-color: #e9ecef;
+            }
+    </style>
+
+
+
 </head>
 
 <body>
     <partial name="_Header" />
     <partial name="Sidebars/_Sidebar-Driver" />
 
+
     <div class="main-content">
         <div class="cards-container">
             <div class="card">
                 <div class="details-header">
-                    <img src="https://via.placeholder.com/100" alt="Delivery Image" class="delivery-image">
+                    <img src="~/shipping_box.png" alt="Delivery Image" class="delivery-image">
                     <h2><b>@Model.ReferenceNumber</b></h2>
                 </div>
 
                 <div class="button-tabs">
+                    <button class="btn tab-button" data-section="statusSection" id="statusBtn">STATUS</button>
                     <button class="btn tab-button" data-section="vehicleSection" id="vehicleBtn">VEHICLE</button>
                     <button class="btn tab-button" data-section="addressesSection" id="addressesBtn">ADDRESSES</button>
                     <button class="btn tab-button" data-section="metricsSection" id="metricsBtn">METRICS</button>
-                    <button class="btn tab-button" data-section="statusSection" id="statusBtn">STATUS</button>
-                </div>
-
-                <div id="vehicleSection" class="section d-none">
-                    <div class="vehicles-section-header">
-                        <img src="https://via.placeholder.com/100" alt="Delivery Image" class="delivery-image">
-                        <h4>Vehicle details</h4>
-                    </div>
-                    <p><strong>Registration Number:</strong> @Model.RegistrationNumber</p>
-                    <p><strong>Vehicle Type:</strong> @Model.VehicleType</p>
-                </div>
-
-                <div id="addressesSection" class="section d-none">
-                    <div class="addresses-container">
-                        <div class="address-column">
-                            <h5>Pickup Address</h5>
-                            <p><strong>Address:</strong> @Model.PickupAddress</p>
-                            <p><strong>Latitude:</strong> @Model.PickupLatitude</p>
-                            <p><strong>Longitude:</strong> @Model.PickupLongitude</p>
-                        </div>
-
-                        <div class="address-column">
-                            <h5>Delivery Address</h5>
-                            <p><strong>Address:</strong> @Model.DeliveryAddress</p>
-                            <p><strong>Latitude:</strong> @Model.DeliveryLatitude</p>
-                            <p><strong>Longitude:</strong> @Model.DeliveryLongitude</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="metricsSection" class="section">
-                    <div style="display: flex; flex-direction: column;">
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px;">
-                            <div style="flex: 1;">
-                                <h5>Client Company Name</h5>
-                                <p>@Model.ClientCompanyName</p>
-                            </div>
-                            <div style="flex: 1;">
-                                <h5>Special Instructions</h5>
-                                <p>@Model.SpecialInstructions</p>
-                            </div>
-                            <div style="flex: 1;">
-                                <h5>Type of Goods</h5>
-                                <p>@Model.TypeOfGoods</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px;">
-                            <div style="flex: 1;">
-                                <h5>Standard Metrics</h5>
-                            </div>
-                            <div style="flex: 4; display: flex; justify-content: space-between;">
-                                <div>
-                                    <p>Weight: @Model.WeightOfPallets kg</p>
-                                </div>
-                                <div>
-                                    <p>Length: @Model.PalletLength</p>
-                                </div>
-                                <div>
-                                    <p>Width: @Model.PalletWidth</p>
-                                </div>
-                                <div>
-                                    <p>Height: @Model.PalletHeight</p>
-                                </div>
-                                <div>
-                                    <p>Stackable: @Model.PalletsAreStackable</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px;">
-                            <div style="flex: 1;">
-                                <h5>Non-Standard Metrics</h5>
-                                @foreach (var item in Model.NonStandardCargos)
-                                {
-                                    <p>Weight: @item.Weight kg</p>
-                                    <p>Length: @item.Length</p>
-                                    <p>Width: @item.Width</p>
-                                    <p>Height: @item.Height</p>
-                                }
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px;">
-                            <div style="flex: 1;">
-                                <h5>Shared Truck</h5>
-                                <p>@Model.SharedTruck</p>
-                                <p>Is Refrigerated: @Model.IsRefrigerated</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div id="statusSection" class="section d-none">
                     <h5>@Model.ExpectedDeliveryDate</h5>
                     <h6>Current Time: <span id="currentTime"></span></h6>
-                    <a asp-action="AddStatus" asp-controller="Driver" asp-route-id="@Model.Id" id="addStatusButton">Add Status</a>
+                    <a asp-action="AddStatus" asp-controller="Driver" asp-route-id="@Model.Id" class="add-status-button">Add Status</a>
 
                     <div class="delivery-steps">
-                        <!-- Four Steps -->
                         @{
                             var steps = new[] { "Booked", "Collected", "In Transit", "Delivered" };
                             var currentStep = Model.DeliveryStep;
@@ -146,15 +246,13 @@
                             var lineClass = i < steps.Length - 1 ? (isCompleted ? "step-line completed" : "step-line") : "";
 
                             <div class="step-container">
-                                <div class="step-dot">
-                                    <div class="@dotClass"></div>
-                                    @if (i < steps.Length - 1)
-                                    {
-                                        <div class="@lineClass"></div>
-                                    }
-                                </div>
+                                <div class="@dotClass"></div>
+                                @if (i < steps.Length - 1)
+                                {
+                                    <div class="@lineClass"></div>
+                                }
                                 <div class="step-text">
-                                    <img src="path/to/@steps[i].ToLower().Replace(" ", "_")-icon.jpg" alt="@steps[i] Icon">
+                                    <img src="~/@steps[i].ToLower().Replace(" ", "_")_icon.png" alt="@steps[i] Icon" class="step-icon">
                                     <p>@steps[i]</p>
                                 </div>
                             </div>
@@ -179,12 +277,87 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="vehicleSection" class="section d-none">
+                    <div class="vehicles-section-header">
+                        <img src="~/delivery_van_icon.png" alt="Delivery Image" class="delivery-image">
+                        <h4>Vehicle details</h4>
+                    </div>
+                    <p><strong>Registration Number:</strong> @Model.RegistrationNumber</p>
+                    <p><strong>Vehicle Type:</strong> @Model.VehicleType</p>
+                </div>
+
+                <div id="addressesSection" class="section d-none">
+                    <div class="addresses-container">
+                        <div class="address-column">
+                            <h5>Pickup Address</h5>
+                            <p><strong>Address:</strong> @Model.PickupAddress</p>
+                            <p><strong>Latitude:</strong> @Model.PickupLatitude</p>
+                            <p><strong>Longitude:</strong> @Model.PickupLongitude</p>
+                        </div>
+
+                        <div class="address-column">
+                            <h5>Delivery Address</h5>
+                            <p><strong>Address:</strong> @Model.DeliveryAddress</p>
+                            <p><strong>Latitude:</strong> @Model.DeliveryLatitude</p>
+                            <p><strong>Longitude:</strong> @Model.DeliveryLongitude</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="metricsSection" class="section d-none">
+                    <div class="metrics-container">
+                        <div class="metrics-column">
+                            <h5>Client Company Name</h5>
+                            <p><strong>Company Name:</strong> @Model.ClientCompanyName</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Special Instructions</h5>
+                            <p><strong>Instructions:</strong> @Model.SpecialInstructions</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Type of Goods</h5>
+                            <p><strong>Goods:</strong> @Model.TypeOfGoods</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Standard Metrics</h5>
+                            <p><strong>Weight:</strong> @Model.WeightOfPallets kg</p>
+                            <p><strong>Length:</strong> @Model.PalletLength</p>
+                            <p><strong>Width:</strong> @Model.PalletWidth</p>
+                            <p><strong>Height:</strong> @Model.PalletHeight</p>
+                            <p><strong>Stackable:</strong> @Model.PalletsAreStackable</p>
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Non-Standard Metrics</h5>
+                            @foreach (var item in Model.NonStandardCargos)
+                            {
+                                <p><strong>Weight:</strong> @item.Weight kg</p>
+                                <p><strong>Length:</strong> @item.Length</p>
+                                <p><strong>Width:</strong> @item.Width</p>
+                                <p><strong>Height:</strong> @item.Height</p>
+                            }
+                        </div>
+                        <div class="metrics-column">
+                            <h5>Shared Truck</h5>
+                            <p><strong>Shared Truck:</strong> @Model.SharedTruck</p>
+                            <p><strong>Is Refrigerated:</strong> @Model.IsRefrigerated</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         $(document).ready(function () {
+            // Initially show the first section
+            showSection('#statusSection');
+            $('#statusBtn').addClass('active');
+
+            $('#statusBtn').click(function () {
+                showSection('#statusSection');
+            });
+
             $('#vehicleBtn').click(function () {
                 showSection('#vehicleSection');
             });
@@ -196,13 +369,12 @@
             $('#metricsBtn').click(function () {
                 showSection('#metricsSection');
             });
-            $('#statusBtn').click(function () {
-                showSection('#statusSection');
-            });
 
             function showSection(sectionId) {
                 $('.section').addClass('d-none');
                 $(sectionId).removeClass('d-none');
+                $('.tab-button').removeClass('active');
+                $(`[data-section="${sectionId.replace('#', '')}"]`).addClass('active');
             }
 
             function initPickupMap() {
@@ -238,17 +410,15 @@
             setInterval(() => {
                 document.getElementById("currentTime").innerText = new Date().toLocaleString();
             }, 1000);
-        }); document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', function () {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
         });
     </script>
+
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    </body>
+</body>
 
 </html>
