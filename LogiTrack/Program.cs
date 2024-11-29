@@ -1,25 +1,39 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using LogiTrack.Infrastructure;
 using LogiTrack.Core.Contracts;
 using LogiTrack.Core.Services;
+using LogiTrack.Infrastructure;
 using LogiTrack.Infrastructure.Repository;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddScoped<IDriverService, DriverService>();
-builder.Services.AddScoped<IDeliveryService, DeliveryService>();
-builder.Services.AddScoped<IAccountantService, AccountantService>();
-builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddScoped<ICashRegisterService, CashRegisterService>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddScoped<IGoogleDriveService, GoogleDriveService>();
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
+builder.Services.AddHttpClient<GeocodingService>();
+builder.Services.AddScoped<IGoogleDriveService, GoogleDriveService>();
+builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IDeliveryStatisticsService, DeliveryStatisticsService>();
+
+builder.Services.AddScoped<IFuelPriceService, FuelPriceService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IDeliveryService, DeliveryService>();
+builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddScoped<ICashRegisterService, CashRegisterService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+//TODO: Add password constraints
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
 {
     opt.SignIn.RequireConfirmedAccount = false;
@@ -27,24 +41,15 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<GeocodingService>();
-builder.Services.AddScoped<IHomeService, HomeService>();    
-builder.Services.AddScoped<IClientsService, ClientsService>();
-builder.Services.AddScoped<IOfferService, OfferService>();
-builder.Services.AddScoped<IRequestService, RequestService>();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
