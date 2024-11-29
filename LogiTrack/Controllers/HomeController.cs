@@ -58,7 +58,7 @@ namespace LogiTrack.Controllers
                 ModelState.AddModelError(string.Empty, InvalidLoginAttemptErrorMessage);
                 return View(model);
             }
-            if (await userManager.IsInRoleAsync(user, ClientCompany))
+            if(await userManager.IsInRoleAsync(user, ClientCompany))
             {
                 return RedirectToAction("Dashboard", "Clients");
             }

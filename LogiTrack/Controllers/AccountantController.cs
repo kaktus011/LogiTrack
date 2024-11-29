@@ -1,35 +1,37 @@
 ﻿using LogiTrack.Core.Contracts;
-using LogiTrack.Core.CustomExceptions;
 using static LogiTrack.Core.Constants.MessageConstants.ErrorMessages;
 using Microsoft.AspNetCore.Mvc;
 using LogiTrack.Core.ViewModels.Invoice;
 using LogiTrack.Core.ViewModels.CashRegister;
 using LogiTrack.Core.ViewModels.Delivery;
-using LogiTrack.Core.ViewModels.Accountant;
 
 namespace LogiTrack.Controllers
 {
     public class AccountantController : Controller
     {
-        private readonly IAccountantService accountantService;
         private readonly IVehicleService vehicleService;
         private readonly IDeliveryService deliveryService;
         private readonly ICashRegisterService cashRegisterService;
         private readonly IInvoiceService invoiceService;
+        private readonly IStatisticsService statisticsService;
+        private readonly IDashboardService dashboardService;
+        private readonly IDeliveryStatisticsService deliveryStatisticsService;
 
-        public AccountantController(IAccountantService accountantService, IVehicleService vehicleService, IDeliveryService deliveryService, ICashRegisterService cashRegisterService, IInvoiceService invoiceService)
+        public AccountantController(IVehicleService vehicleService, IDeliveryService deliveryService, ICashRegisterService cashRegisterService, IInvoiceService invoiceService, IStatisticsService statisticsService, IDashboardService dashboardService, IDeliveryStatisticsService deliveryStatisticsService)
         {
-            this.accountantService = accountantService;
             this.vehicleService = vehicleService;
             this.deliveryService = deliveryService;
             this.cashRegisterService = cashRegisterService;
             this.invoiceService = invoiceService;
+            this.statisticsService = statisticsService;
+            this.dashboardService = dashboardService;
+            this.deliveryStatisticsService = deliveryStatisticsService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
-            var model = await accountantService.GetAccountantDashboardAsync();
+            var model = await dashboardService.GetAccountantDashboardAsync();
             return View(model);
         }
 
@@ -48,7 +50,8 @@ namespace LogiTrack.Controllers
             {
                 return View(model);
             }
-            var deliveryId = await deliveryService.GetDeliveryByReferenceNumberForAccountantAsync(model.ReferenceNumber);
+
+            var deliveryId = await deliveryService.GetDeliveryByReferenceNumberAsync(model.ReferenceNumber);
             if (deliveryId == default)
             {
                 TempData["NotFound"] = DeliveryNotFoundErrorMessage;
@@ -86,7 +89,6 @@ namespace LogiTrack.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCashRegister(int id, AddCashRegisterViewModel model, IFormFile file)
         {
-
             if (ModelState.IsValid == false)
             {
                 return View(model);
@@ -96,9 +98,20 @@ namespace LogiTrack.Controllers
                 await cashRegisterService.AddCashRegisterForDeliveryAsync(id, model, file);
                 return RedirectToAction(nameof(DeliveryDetails), new { id = id });
             }
-            catch (DeliveryNotFoundException ex)
+            catch(Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchCashRegisters([FromQuery] FilterCashRegistersViewModel query)
+        {
+            try
+            {
+                var model = await cashRegisterService.GetCashRegistersAsync(query.DeliveryReferenceNumber, query.StartDate, query.EndDate, query.Type, query.MinPrice, query.MaxPrice);
+                query.CashRegisters = model;
+                return View(query);
             }
             catch (Exception ex)
             {
@@ -107,42 +120,28 @@ namespace LogiTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchCashRegisters([FromQuery] SearchCashRegistersViewModel query)
+        public async Task<IActionResult> SearchInvoices([FromQuery] FilterInvoicesViewModel query)
         {
             try
             {
-                var model = await cashRegisterService.GetCashRegistersForDeliveryAsync(query.DeliveryReferenceNumber, query.StartDate, query.EndDate, query.Type);
-                query.CashRegisters = model;
-                return View(query);
-            }
-            catch (DeliveryNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> SearchInvoices([FromQuery] SearchInvoicesViewModel query)
-        {
-            try
-            {
-                var model = await invoiceService.GetInvoicesAsync(query.DeliveryReferenceNumber, query.StartDate, query.EndDate, query.CompanyName, query.IsPaid);
+                var model = await invoiceService.GetInvoicesAsync(query.DeliveryReferenceNumber, query.StartDate, query.EndDate, query.CompanyName, query.IsPaid, query.MinAmount, query.MaxAmount);
                 query.Invoices = model;
                 return View(query);
             }
-            catch (DeliveryNotFoundException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex.Message);
-            }
+                return BadRequest(ex.Message);
+            }                       
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchDeliveries([FromQuery] SearchDeliveryForAccountantViewModel query)
+        public async Task<IActionResult> SearchDeliveries([FromQuery] FilterDeliveriesForAccountantViewModel query)
         {
-            var model = await deliveryService.GetDeliveryForAccountantAsync(query.ReferenceNumber, query.EndDate, query.StartDate, query.ClientCompanyName, query.IsPaid);
+            var model = await deliveryService.GetDeliveriesForAccountantBySearchtermAsync(query.SearchTerm);
             query.Deliveries = model;
-            model = await deliveryService.GetDeliveriesForAccountantBySearchtermAsync(query.SearchTerm);
+            model = await deliveryService.GetDeliveriesForAccountantAsync(query.ReferenceNumber, query.EndDate, query.StartDate, query.ClientCompanyName, query.IsPaid);
             query.Deliveries = model;
+            
             return View(query);
         }
 
@@ -160,12 +159,69 @@ namespace LogiTrack.Controllers
         [HttpPost]
         public async Task<IActionResult> MarkAsPaidSuccessful(int id)
         {
-            if (await invoiceService.InvoiceWithIdExistsAsync(id) == false)
+            if(await invoiceService.InvoiceWithIdExistsAsync(id) == false)
             {
                 return NotFound(InvoiceNotFoundErrorMessage);
             }
             var deliveryId = await invoiceService.MarkInvoiceAsPaidAsync(id);
             return RedirectToAction(nameof(DeliveryDetails), new { id = deliveryId });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CashRegistersStatistics()
+        {
+            var model = await deliveryStatisticsService.GetCashRegisterStatisticsAsync();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetCashRegisterTypesDistribution()
+        {
+            var data = await deliveryStatisticsService.GetCashRegisterTypesDistributionAsync();
+            return Json(data);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> AdditionalCostsForCashRegisters()
+        {
+            var model = await deliveryStatisticsService.GetCashRegistersAmountAsync();
+            return Json(new { maxAdditionalCost = model.Item1, averageAdditionalCost = model.Item2 });
+        }        
+
+        [HttpGet]
+        public async Task<JsonResult> GetTotalAdditionalCostsByDeliveryType()
+        {
+            var data = await deliveryStatisticsService.GetGetTotalAdditionalCostsByDeliveryTypeAsync();
+            return Json(data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> InvoicesStatistics()
+        {
+            var model = await deliveryStatisticsService.GetInvoicesStatisticsAsync();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetInvoicesByStatus()
+        {
+            var data = await deliveryStatisticsService.GetInvoicesByStatusAsync();
+            return Json(data);
+        }
+        
+        [HttpGet]
+        public async Task<JsonResult> GetTop10ClientsByOverdueAmount()
+        {
+            var data = await deliveryStatisticsService.GetTop10ClientsByOverdueAmountAsync();
+            return Json(data);
+        }
+        
+        [HttpGet]
+        public async Task<JsonResult> GetLatePaymentsByClient()
+        {
+            var data = await deliveryStatisticsService.GetLatePaymentsByClientAsync();
+            return Json(data);
+        }
+
     }
 }
