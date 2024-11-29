@@ -14,11 +14,11 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         public int Id { get; set; }
 
         [Comment("User identifier")]
-        public string? UserId { get; set; }
+        public string? UserId { get; set; } 
 
         [ForeignKey(nameof(UserId))]
         [Comment("User")]
-        public IdentityUser? User { get; set; }
+        public IdentityUser? User { get; set; } 
 
         [Required]
         [StringLength(CompanyNameMaxLength)]
@@ -69,9 +69,6 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         public IEnumerable<Offer> Offers { get; set; } = new List<Offer>();
 
         [Comment("Company's invoices")]
-        public IEnumerable<Invoice> Invoices { get; set; } = new List<Invoice>();
-
-        [Comment("Company's calendar events")]
-        public IEnumerable<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+        public IEnumerable<Invoice> Invoices { get; set; } = new List<Invoice>();       
     }
 }

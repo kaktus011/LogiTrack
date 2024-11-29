@@ -47,7 +47,7 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Required]
         [Comment("Euro pallets capacity")]
         [Range(PalletCapacityMinValue, PalletCapacityMaxValue)]
-        public int EuroPalletCapacity { get; set; }
+        public int EuroPalletCapacity { get; set; } 
 
         [Required]
         [Comment("Industrial pallets capacity")]
@@ -85,7 +85,7 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Range(KilometersMinValue, KilometersMaxValue)]
         public double KilometersToChangeParts { get; set; }
 
-        public double KilometersLeftToChangeParts { get; set; }
+        public double KilometersLeftToChangeParts {get; set; }
 
         [Comment("Vehicle's delivery")]
         public IEnumerable<Delivery> Deliveries { get; set; } = new List<Delivery>();
@@ -94,6 +94,12 @@ namespace LogisticsSystem.Infrastructure.Data.DataModels
         [Comment("Vehicle's purchase price")]
         [Range(PriceMinValue, PriceMaxValue)]
         public decimal PurchasePrice { get; set; }
+
+        [Comment("Emission factor (kg CO2 per liter)")]
+        [Range(0, 10)] 
+        public double EmissionFactor { get; set; }
+
+        public bool IsAvailable { get; set; }
 
         [Required]
         [Comment("Vehicle's constant expences")]
