@@ -20,8 +20,9 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
 
             builder.Property(x => x.Salary)
               .HasColumnType("decimal(18,2)");
+
             var data = new SeedData();
-            builder.HasData(new Driver[] { data.Driver1, data.Driver2 });
+            builder.HasData(new Driver[] { data.Driver1, data.Driver2});
         }
     }
 }

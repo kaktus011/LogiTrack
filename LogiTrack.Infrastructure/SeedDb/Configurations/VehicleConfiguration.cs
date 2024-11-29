@@ -18,6 +18,7 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
 
             builder.Property(x => x.PurchasePrice)
                 .HasColumnType("decimal(18,2)");
+
             var data = new SeedData();
             builder.HasData(new Vehicle[] { data.Vehicle1, data.Vehicle2 });
         }

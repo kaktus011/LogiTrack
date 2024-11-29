@@ -14,6 +14,7 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
            builder.Ignore("ClientCompanyId1");
+
             var data = new SeedData();
             builder.HasData(new Invoice[] { data.Invoice1, data.Invoice2, data.Invoice3, data.Invoice4, data.Invoice5 });
         }
