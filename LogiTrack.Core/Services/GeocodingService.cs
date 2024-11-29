@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace LogiTrack.Core.Services
@@ -12,6 +11,21 @@ namespace LogiTrack.Core.Services
         public GeocodingService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+        }
+
+        public async Task<(double Latitude, double Longtitude)?> GetCoordinates(string address)
+        {
+            var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={googleMapsApiKey}";
+
+            var response = await httpClient.GetFromJsonAsync<GeocodingResponse>(url);
+
+            if (response?.Results?.Any() == true)
+            {
+                var location = response.Results.First().Geometry.Location;
+                return (location.Latitude, location.Longitude);
+            }
+
+            return null;
         }
 
         public async Task<string?> GetAddress(double latitude, double longitude)
