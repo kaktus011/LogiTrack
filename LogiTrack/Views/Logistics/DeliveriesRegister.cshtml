@@ -1,6 +1,6 @@
-﻿@model LogiTrack.Core.ViewModels.Delivery.FilterDeliveriesForAccountantViewModel
+﻿@model LogiTrack.Core.ViewModels.Delivery.FilterDeliveriesForLogististicsViewModel
 @{
-Layout = null;
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -15,10 +15,6 @@ Layout = null;
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="~/js/site.js"></script>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-
         .container {
             background-color: white;
             padding: 20px;
@@ -113,10 +109,6 @@ Layout = null;
             box-shadow: 0 3px 1px -2px #0003, 0 2px 2px 0 #00000024, 0 1px 5px 0 #0000001f;
         }
 
-            .btn:hover {
-                opacity: 0.9;
-            }
-
         .btn-clear {
             width: 80px;
             text-align: center;
@@ -132,9 +124,13 @@ Layout = null;
             font-size: 13px;
         }
 
-            .btn-clear:hover {
-                opacity: 0.8;
-            }
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-clear:hover {
+            opacity: 0.8;
+        }
 
         .filtered-deliveries-container {
             background-color: #ffff;
@@ -158,7 +154,7 @@ Layout = null;
             padding: 30px;
             font-weight: bold;
             font-size: 0.90rem;
-            width: 90%;
+            width: 95%;
         }
 
         .delivery-card {
@@ -170,11 +166,6 @@ Layout = null;
             position: relative;
             overflow: hidden;
         }
-
-            .delivery-card:hover {
-                background-color: #73EC8B;
-                opacity: 90%;
-            }
 
             .delivery-card:nth-child(even) {
                 background-color: #F5F5F7;
@@ -203,21 +194,33 @@ Layout = null;
                 margin-left: 210px;
             }
 
-        .address {
-            width: 140px;
-            flex-wrap: wrap;
-        }
-
         .delivery-card:hover .delivery-metrics {
             display: flex;
             background-color: #54C392;
             opacity: 1;
         }
 
+        .delivery-card:hover {
+            background-color: #73EC8B;
+            opacity: 90%;
+        }
+
         .no-found {
             padding: 15px;
             color: #00aa87;
             text-align: center;
+        }
+
+        .address {
+            width: 130px;
+            flex-wrap: wrap;
+        }
+
+        .checkboxes {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            width: 33%;
         }
     </style>
 </head>
@@ -236,6 +239,8 @@ Layout = null;
                 <span class="arrow">&#x25BC;</span>
             </button>
             <div class="profile-dropdown-menu" id="profileDropdown">
+                <a asp-action="CompanyDetails" asp-controller="Clients">Company details</a>
+                <a asp-action="ContactDetails" asp-controller="Clients">Contact details</a>
                 <a asp-action="Logout" asp-controller="Home">Logout</a>
             </div>
         </div>
@@ -243,40 +248,102 @@ Layout = null;
     <aside class="sidebar">
         <ul>
             <li>
-                <a asp-action="Dashboard" asp-controller="Accountant">
+                <a asp-action="Dashboard" asp-controller="Logistics">
                     <i class="bi bi-house-door"></i> Dashboard
                 </a>
             </li>
             <li>
-                <a asp-action="SearchDeliveries" asp-controller="Accountant">
-                    <i class="bi bi-truck"></i> Deliveries <span class="arrow">></span>
+                <a href="#">
+                    <i class="bi bi-people"></i> Clients <span class="arrow">></span>
                 </a>
                 <div class="dropdown-menu">
                     <ul>
-                        <li><a asp-action="SearchDeliveries" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
-                        <li><a asp-action="SearchDelivery" asp-controller="Accountant"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="GetPendingRegistrations" asp-controller="Logistics"><i class="bi bi-person-plus"></i> New registrations</a></li>
+                        <li><a asp-action="ClientsRegister" asp-controller="Logistics"><i class="bi bi-journal-text"></i> Clients register</a></li>
+                        <li><a asp-action="SearchCompany" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="ClientsStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart-line"></i> Statistics</a></li>
                     </ul>
                 </div>
             </li>
             <li>
-                <a asp-action="SearchCashRegisters" asp-controller="Accountant">
-                    <i class="bi bi-cash"></i> Cash registers <span class="arrow">></span>
+                <a asp-action="VehiclesRegister" asp-controller="Logistics">
+                    <i class="bi bi-truck"></i> Vehicles <span class="arrow">></span>
                 </a>
                 <div class="dropdown-menu">
                     <ul>
-                        <li><a asp-action="SearchCashRegisters" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
-                        <li><a asp-action="CashRegistersStatistics" asp-controller="Accountant"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                        <li><a asp-action="SearchVehicle" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="VehiclesRegister" asp-controller="Logistics"><i class="bi bi-list-task"></i> Vehicles Register</a></li>
+                        <li><a asp-action="VehicleStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart"></i> Statistics</a></li>
                     </ul>
                 </div>
             </li>
             <li>
-                <a asp-action="SearchInvoices" asp-controller="Accountant">
-                    <i class="bi bi-receipt"></i> Invoices <span class="arrow">></span>
+                <a asp-action="DriversRegister" asp-controller="Logistics">
+                    <i class="bi bi-person-badge"></i> Drivers <span class="arrow">></span>
                 </a>
                 <div class="dropdown-menu">
                     <ul>
-                        <li><a asp-action="SearchInvoices" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
-                        <li><a asp-action="InvoicesStatistics" asp-controller="Accountant"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                        <li><a asp-action="SearchDriver" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="DriversRegister" asp-controller="Logistics"><i class="bi bi-people-fill"></i> Drivers Register</a></li>
+                        <li><a asp-action="DriverStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart-line"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="RequestsRegister" asp-controller="Logistics">
+                    <i class="bi bi-card-list"></i> Requests <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchRequest" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="RequestsRegister" asp-controller="Logistics"><i class="bi bi-journal"></i> Requests Register</a></li>
+                        <li><a asp-action="RequestsStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="OffersRegister" asp-controller="Logistics">
+                    <i class="bi bi-file-earmark-text"></i> Offers <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchOffer" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="OffersRegister" asp-controller="Logistics"><i class="bi bi-journal-text"></i> Offers Register</a></li>
+                        <li><a asp-action="OfferStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="DeliveriesRegister" asp-controller="Logistics">
+                    <i class="bi bi-box-seam"></i> Deliveries <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchDelivery" asp-controller="Logistics"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="DeliveriesRegister" asp-controller="Logistics"><i class="bi bi-journal"></i> Deliveries Register</a></li>
+                        <li><a asp-action="DeliveryStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="InvoicesRegister" asp-controller="Logistics">
+                    <i class="bi bi-receipt"></i> Invoices register <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="InvoicesRegister" asp-controller="Logistics"><i class="bi bi-journal"></i> Invoices Register</a></li>
+                        <li><a asp-action="InvoicesStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart-line"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="SearchCashRegisters" asp-controller="Logistics">
+                    <i class="bi bi-cash-stack"></i> Cash registers <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchCashRegisters" asp-controller="Logistics"><i class="bi bi-journal"></i> Cash Register</a></li>
+                        <li><a asp-action="CashRegisterStatistics" asp-controller="Logistics"><i class="bi bi-bar-chart-line"></i> Statistics</a></li>
                     </ul>
                 </div>
             </li>
@@ -287,12 +354,11 @@ Layout = null;
             <div class="quick-search-header">
                 <div class="search-icon">
                     <i class="bi bi-search" style="font-size: 35px; color:#00aa87;"></i>
-                </div>              
-                <h2 class="quick-search-title">Quick deliveries search</h2>
+                </div>                 <h2 class="quick-search-title">Quick my deliveries search</h2>
             </div>
             <p class="search-description">Please enter your search criteria</p>
 
-            <form asp-action="SearchDeliveries" asp-controller="Accountant" method="get" class="search-form">
+            <form asp-action="DeliveriesRegister" asp-controller="Logistics" method="get" class="search-form">
                 <div class="row">
                     <div class="form-group">
                         <label asp-for="ReferenceNumber"><b>Ref No</b></label>
@@ -300,8 +366,20 @@ Layout = null;
                         <span asp-validation-for="ReferenceNumber"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="ClientCompanyName"><b>Client</b></label>
-                        <input type="text" id="CompanyName" asp-for="ClientCompanyName" placeholder="Please enter">
+                        <label asp-for="MinPrice"><b>Min price</b></label>
+                        <input type="text" id="CompanyName" asp-for="MinPrice" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxPrice"><b>Max price</b></label>
+                        <input type="text" id="CompanyName" asp-for="MaxPrice" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PickupAddress"><b>Origin</b></label>
+                        <input type="text" id="CompanyName" asp-for="PickupAddress" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DeliveryAddress"><b>Destination</b></label>
+                        <input type="text" id="CompanyName" asp-for="DeliveryAddress" placeholder="Please enter">
                     </div>
                     <div class="form-group">
                         <label asp-for="StartDate"><b>Start</b></label>
@@ -311,20 +389,26 @@ Layout = null;
                         <label asp-for="EndDate"><b>End</b></label>
                         <input type="date" id="EndDate" class="flatpickr" asp-for="EndDate" placeholder="Please enter">
                     </div>
-                    <div class="form-group">
-                        <label asp-for="IsPaid"><b>Paid</b></label>
-                        <input type="checkbox" id="IsPaid" value="false" asp-for="IsPaid">
+                    <div class="checkboxes">
+                        <div class="form-group">
+                            <label asp-for="IsPaid"><b>Paid</b></label>
+                            <input type="checkbox" id="IsPaid" asp-for="IsPaid">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IsDelivered"><b>Delivered</b></label>
+                            <input type="checkbox" id="IsDelivered" asp-for="IsPaid">
+                        </div>
                     </div>
                 </div>
                 <div class="button-group">
                     <button type="submit" class="btn"><b>GO</b></button>
-                    <a asp-action="SearchDeliveries" asp-action="Accountant" type="reset" class="btn btn-clear"><b>CLEAR</b></a>
+                    <a asp-action="DeliveriesRegister" asp-action="Logistics" type="reset" class="btn btn-clear"><b>CLEAR</b></a>
                 </div>
             </form>
         </div>
 
         <div class="filtered-deliveries-container">
-            <form asp-action="SearchDeliveries" asp-controller="Accountant" method="get" class="quick-search-form">
+            <form asp-action="DeliveriesRegister" asp-controller="Logistics" method="get" class="quick-search-form">
                 <div class="form-group">
                     <input type="text" id="keyword" asp-for="SearchTerm" placeholder="Enter keyword">
                     <button type="submit">
@@ -338,9 +422,9 @@ Layout = null;
                 <span>Ref No</span>
                 <span>Origin</span>
                 <span>Destination</span>
-                <span>Client</span>
-                <span>Expected date</span>
-                <span>Delivery date</span>
+                <span>Expected Date</span>
+                <span>Price</span>
+                <span>Delivered</span>
                 <span>Paid</span>
             </div>
             @if (Model.Deliveries.Any())
@@ -350,13 +434,17 @@ Layout = null;
                     {
                         <div class="delivery-card">
                             <div class="delivery-info">
-                                <a asp-action="DeliveryDetails" asp-controller="Accountant" asp-route-id="@delivery.Id" style="text-decoration:none; color:inherit;"><span>@delivery.ReferenceNumber</span></a>
+                                <a asp-action="DeliveryDetails" asp-controller="Logistics" asp-route-id="@delivery.Id" style="text-decoration:none; color:inherit;"><span>@delivery.ReferenceNumber</span></a>
                                 <span class="address">@delivery.PickupAddress</span>
                                 <span class="address">@delivery.DeliveryAddress</span>
-                                <span>@delivery.ClientCompanyName</span>
                                 <span>@delivery.ExpectedDeliveryDate</span>
-                                <span>@delivery.ActualDeliveryDate</span>
-
+                                <span>@delivery.FinalPrice BGN</span>
+                                <span>
+                                    @if (delivery.IsDelivered)
+                                    {
+                                        <i class="bi bi-check-circle-fill" style="color: #00aa87;"></i>
+                                    }
+                                </span>
                                 <span>
                                     @if (delivery.IsPaid)
                                     {
@@ -365,7 +453,7 @@ Layout = null;
                                 </span>
                             </div>
                             <div class="delivery-metrics">
-                                <p><b>Packs:</b> @delivery.TotalCargos</p>
+                                <p><b>Packs:</b> @delivery.TotalItems</p>
                                 <p><b>Weight:</b> @delivery.TotalWeight</p>
                                 <p><b>Volume:</b> @delivery.TotalVolume</p>
                             </div>
@@ -398,6 +486,8 @@ Layout = null;
                 dateFormat: "Y-m-d",
             });
         });
+
+
     </script>
 
 </body>

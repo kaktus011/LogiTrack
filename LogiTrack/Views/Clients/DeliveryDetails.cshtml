@@ -1,8 +1,8 @@
-﻿@model LogiTrack.Core.ViewModels.Delivery.DeliveryForDriverViewModel
+﻿@model LogiTrack.Core.ViewModels.Delivery.DeliveryForClientViewModel
 @{
     Layout = null;
 }
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfA3_DsCdEYZeSpUwLBSenw1Gyp1VGIp4"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=test"></script>
     <script src="~/js/site.js"></script>
     <style>
         .delivery-details-container {
@@ -36,7 +36,7 @@
         .delivery-image {
             width: 50px;
             height: auto;
-            margin-left:10px;
+            margin-left: 10px;
             margin-right: 10px;
         }
 
@@ -65,6 +65,19 @@
                 opacity: 80%;
             }
 
+        p {
+            font-size: 14px;
+            color: black;
+            opacity: 80%;
+        }
+
+        .divider-line {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 10px 0;
+        }
+
+
         .maps-container {
             display: flex;
             gap: 20px;
@@ -79,12 +92,45 @@
             border-radius: 5px;
         }
 
-        .button-steps {
+        .movement-history {
+            margin-top: 40px;
+        }
+
+        .movement-steps {
             display: flex;
             flex-direction: row;
-            margin-top: 30px;
-            gap: 200px;
-            margin-bottom: 30px;
+            justify-content: space-between;
+            width: 60%;
+            margin-left: 10px;
+            margin-top: 20px;
+        }
+
+        .movement-rows {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movement-row {
+            display: flex;
+            align-items: center;
+            gap: 90px;
+            padding: 10px 0;
+        }
+
+        .movement-event {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            text-align: center;
+        }
+
+        .movement-location {
+            flex-wrap: wrap;
+            max-width: 60%;
+        }
+
+        .movement-location, .movement-time {
+            margin-left: 10px;
         }
 
         .text-tracking-line {
@@ -130,6 +176,24 @@
         .step-text {
             text-align: center;
             margin-top: 8px;
+        }
+
+        h4 {
+            font-size: 20px;
+            color: #00aa87;
+            font-weight: 500;
+        }
+
+        .status-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        .address-column strong {
+            color: black;
         }
 
         .metrics-header {
@@ -204,82 +268,129 @@
             opacity: 80%;
         }
 
-        .status-header {
+        .table-header-row {
             display: flex;
             flex-direction: row;
-            gap: 180px;
-            margin-bottom: 20px;
+            margin-left: 50px;
+            justify-content: space-between;
+            width: 90%;
         }
 
-        p {
+        .table-info-row {
+            display: flex;
+            flex-direction: row;
+            background-color: #fbfbfb;
+            margin-left: 30px;
+            justify-content: space-between;
+            white-space: nowrap;
+            font-weight: 300;
             font-size: 14px;
-            color: black;
             opacity: 80%;
+            width: 95%;
+        }
+
+        .file-icon {
+            color: #00aa87;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .file-icon i {
+                font-size: 1.2em;
+                margin-right: 5px;
+            }
+
+            .file-icon:hover {
+                color: #0056b3;
+            }
+
+        .emission-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart {
+            flex: 1;
+            max-width: 300px;
+            max-height: 400px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 1.7em;
+            color: #00aa87;
+            width: 100%;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+                .star-rating label:hover,
+                .star-rating input:checked ~ label {
+                    color: #FFA500;
+                }
+
+            .star-rating .rated {
+                color: #FFD700;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
         }
 
         .btn-primary {
             background-color: #00aa87;
-            text-decoration: none;
-            width: 145px;
-            height: 30px;
             color: white;
             border: none;
-            border-radius: 3px;
             padding: 10px 15px;
+            border-radius: 5px;
             cursor: pointer;
-            margin-left: 10px;
+            transition: background-color 0.3s;
             box-shadow: 0 3px 1px -2px #0003, 0 2px 2px 0 #00000024, 0 1px 5px 0 #0000001f;
         }
 
             .btn-primary:hover {
-                opacity: 0.9;
+                background-color: #00aa87;
+                box-shadow: 0 3px 1px -2px #0003, 0 2px 2px 0 #00000024, 0 1px 5px 0 #0000001f;
             }
 
-        a .btn-primary {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 200;
         }
 
-        .movement-history {
-            margin-top: 40px;
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            border: none;
+            border-bottom: 1.4px solid grey;
+            padding: 8px 0;
+            margin-bottom: 15px;
         }
 
-        .movement-steps {
+            input[type="text"]:focus,
+            input[type="date"]:focus {
+                outline: none;
+                border-bottom-color: #00aa87;
+            }
+
+        .text-rating {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            width: 60%;
-            margin-left: 10px;
-            margin-top: 20px;
-        }
-
-        .movement-rows {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .movement-row {
-            display: flex;
-            align-items: center;
-            gap: 90px;
-            padding: 10px 0;
-        }
-
-        .movement-event {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            text-align: center;
-        }
-
-        .movement-location {
-            flex-wrap: wrap;
-            max-width: 60%;
-        }
-
-        .movement-location, .movement-time {
-            margin-left: 10px;
+            width: 80%;
         }
     </style>
 
@@ -299,46 +410,56 @@
                 <span class="arrow">&#x25BC;</span>
             </button>
             <div class="profile-dropdown-menu" id="profileDropdown">
-                <a asp-action="Details" asp-controller="Driver">Personal details</a>
-                <a asp-action="LicenseDetails" asp-controller="Driver">License</a>
+                <a asp-action="CompanyDetails" asp-controller="Clients">Company details</a>
+                <a asp-action="ContactDetails" asp-controller="Clients">Contact details</a>
                 <a asp-action="Logout" asp-controller="Home">Logout</a>
             </div>
         </div>
     </header>
     <aside class="sidebar">
         <ul>
+            <li><a asp-action="Dashboard" asp-controller="Clients"><i class="bi bi-house-door"></i> Dashboard</a></li>
             <li>
-                <a asp-action="Dashboard" asp-controller="Driver">
-                    <i class="bi bi-house-door"></i> Dashboard
-                </a>
-            </li>
-            <li>
-                <a asp-action="SearchDelivery" asp-controller="Driver">
-                    <i class="bi bi-plus-circle"></i> New delivery
-                </a>
-            </li>
-            <li>
-                <a asp-action="SearchDeliveries" asp-controller="Driver">
-                    <i class="bi bi-truck"></i> Deliveries <span class="arrow">></span>
-                </a>
+                <a asp-action="MyRequests" asp-controller="Clients"><i class="bi bi-clipboard-check"></i> Requests <span class="arrow">></span></a>
                 <div class="dropdown-menu">
                     <ul>
-                        <li>
-                            <a asp-action="SearchDeliveries" asp-controller="Driver">
-                                <i class="bi bi-box"></i> My deliveries
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-action="DeliveryStatistics" asp-controller="Driver">
-                                <i class="bi bi-graph-up"></i> Statistics
-                            </a>
-                        </li>
+                        <li><a asp-action="MakeRequest" asp-controller="Clients"><i class="bi bi-plus-circle"></i> New</a></li>
+                        <li><a asp-action="MyRequests" asp-controller="Clients"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="RequestStatistics" asp-controller="Clients"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="MyOffers" asp-controller="Clients"><i class="bi bi-file-earmark-text"></i> Offers <span class="arrow">></span></a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="HaveOffer" asp-controller="Clients"><i class="bi bi-calendar-check"></i> Book</a></li>
+                        <li><a asp-action="MyOffers" asp-controller="Clients"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="OfferStatistics" asp-controller="Clients"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="MyDeliveries" asp-controller="Clients"><i class="bi bi-truck"></i> Deliveries <span class="arrow">></span></a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchDelivery" asp-controller="Clients"><i class="bi bi-binoculars"></i> Track</a></li>
+                        <li><a asp-action="MyDeliveries" asp-controller="Clients"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="DeliveryStatistics" asp-controller="Clients"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="MyInvoices" asp-controller="Clients"><i class="bi bi-receipt"></i> Invoices <span class="arrow">></span></a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="MyInvoices" asp-controller="Clients"><i class="bi bi-search"></i> Search</a></li>
+                        <li><a asp-action="InvoicesStatistics" asp-controller="Clients"><i class="bi bi-bar-chart"></i> Statistics</a></li>
                     </ul>
                 </div>
             </li>
         </ul>
     </aside>
-
     <div class="main-content">
         <div class="delivery-details-container">
             <div class="details-card">
@@ -350,25 +471,73 @@
                 </div>
 
                 <div class="button-tabs">
-                    <button class="tab-button" id="vehicleBtn">VEHICLE</button>
+                    <button class="tab-button" id="vehicleBtn">INFO</button>
                     <button class="tab-button" id="addressesBtn">ADDRESSES</button>
                     <button class="tab-button" id="metricsBtn">METRICS</button>
                     <button class="tab-button" id="statusBtn">STATUS</button>
+                    <button class="tab-button" id="invoicesBtn">INVOICES</button>
+                    <button class="tab-button" id="carbonBtn">CO2 EMISSION</button>
                 </div>
 
                 <div id="vehicleSection" class="section d-none">
-                    <div class="columns-container">
-                        <div class="column">
-                            <h4><b>Vehicle details</b></h4>
-                            <p><b>Registration number:</b> @Model.RegistrationNumber</p>
-                            <p><b>Vehicle type:</b> @Model.VehicleType</p>
+                    <div class="text-rating">
+                        <div class="text">
+                            <h4><b>Offer</b></h4>
+                            <p><strong>Offer was made on:</strong> @Model.OfferDate</p>
+                            <a asp-action="OfferDetails" asp-controller="Clients" asp-route-id="@Model.OfferId" style="color:#00aa87">See offer</a>
+                            <h4><b>Request</b></h4>
+                            <a asp-action="RequestDetails" asp-controller="Clients" asp-route-id="@Model.RequestId" style="color:#00aa87">See request</a>
+                            <h4 style="margin-top:30px;"><b>Prices</b></h4>
+
+                            <p><strong>Given price in request:</strong> @Model.ApproximatePrice </p>
+                            <p><strong> Final price:</strong> @Model.FinalPrice</p>
+                            <h4><b>Payment</b></h4>
+                            <p><strong>Days till payment:</strong> @Model.DaysTillPayment</p>
                         </div>
 
-                        <div class="column">
-                            <h4><b>Parameters</b></h4>
-                            <p><b>Metrics:</b> @Model.VehicleLength cm X @Model.VehicleWidth cm X @Model.VehicleHeight cm</p>
-                            <p><b>Weight capacity:</b> @Model.VehicleWeightCapacity KG</p>
-                            <p><b>Fuel consumption:</b> @Model.FuelConsumptionPer100Km L/100KM</p>
+                        <div class="ratings">
+                            <h4><b>Rating</b></h4>
+                            @if (Model.HasRated == true)
+                            {
+                                <p>
+                                    <strong>Your Rating:</strong>
+                                    <div class="star-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <label class="star @((i <= Model.RatingStars) ? "rated" : "")">★</label>
+                                        }
+                                    </div>
+                                </p>
+                                <p>
+                                    <strong>Your comment:</strong>
+                                    <span>@Model.Comment</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <form asp-action="LeaveRating" asp-controller="Clients" asp-route-id="@Model.Id" method="post">
+                                    <div class="form-group">
+                                        <label asp-for="Comment"><strong>Write Your Comment:</strong></label>
+                                        <input type="text" id="Comment" asp-for="Comment" class="form-control" placeholder="Share your experience..." />
+                                    </div>
+                                    <div class="form-group">
+                                        <label><strong>Rate the Service:</strong></label>
+                                        <div class="star-rating">
+                                            <input type="radio" id="star5" name="RatingStars" value="5" />
+                                            <label for="star5">★</label>
+                                            <input type="radio" id="star4" name="RatingStars" value="4" />
+                                            <label for="star4">★</label>
+                                            <input type="radio" id="star3" name="RatingStars" value="3" />
+                                            <label for="star3">★</label>
+                                            <input type="radio" id="star2" name="RatingStars" value="2" />
+                                            <label for="star2">★</label>
+                                            <input type="radio" id="star1" name="RatingStars" value="1" />
+                                            <label for="star1">★</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">SUBMIT</button>
+                                </form>
+                            }
                         </div>
                     </div>
                 </div>
@@ -400,10 +569,6 @@
                 <div id="metricsSection" class="section  d-none">
                     <div class="metrics-header">
                         <div class="metrics-header-row">
-                            <h4><b>Client</b></h4>
-                            <p>@Model.ClientCompanyName</p>
-                        </div>
-                        <div class="metrics-header-row">
                             <h4><b>Type of goods</b></h4>
                             <p>@Model.TypeOfGoods</p>
                         </div>
@@ -412,9 +577,8 @@
                         <h4><b>Special instructions</b></h4>
                         <p>@Model.SpecialInstructions</p>
                     </div>
-
                     <div class="metrics">
-                        <h4><b>Standard metrics</b></h4>
+                        <h4><b>Standard metrics(pallets)</b></h4>
                     </div>
                     <div class="standart-metrics-header-row">
                         <p><b>Number</b></p>
@@ -436,7 +600,7 @@
                     @foreach (var item in Model.NonStandardCargos)
                     {
                         <div class="metrics">
-                            <h4><b>Non-Standart Metrics</b></h4>
+                            <h4><b>Non-standart metrics</b></h4>
                         </div>
                         <div class="non-standart-metrics-header-row">
                             <p><b>Length</b></p>
@@ -451,7 +615,6 @@
                             <p>@item.Height</p>
                             <p>@item.Weight</p>
                             <p>@item.Description</p>
-
                         </div>
                     }
                     <div class="metrics">
@@ -477,15 +640,10 @@
                             <h4><b>Current time</b></h4>
                             <p>@Model.CurrentTime</p>
                         </div>
-                        <div class="status-header-row">
-                            <h4><b>Current location</b></h4>
-                            <p id="location" style="font-size:0.9rem;">Fetching location...</p>
-                        </div>
                     </div>
                     <h4><b>Status</b></h4>
 
                     <div class="button-steps">
-                        <a asp-action="AddStatus" asp-controller="Driver" asp-route-id="@Model.Id" class="btn-primary">NEW STATUS +</a>
                         <div class="text-tracking-line">
                             <div class="tracking-line">
                                 <div class="dot" style="background-color: @(Model.DeliveryStep >= 1 ? "#00aa87" : "gray")"></div>
@@ -538,6 +696,35 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="invoicesSection" class="section d-none invoices">
+                    <h4><b>Invoices</b></h4>
+                    <div class="table-header-row">
+                        <p><b>Number</b></p>
+                        <p><b>Date</b></p>
+                        <p><b>Description</b></p>
+                        <p><b>Status</b></p>
+                        <p><b>File</b></p>
+                    </div>
+                    <div class="table-info-row">
+                        <p>@Model.Invoice.Number</p>
+                        <p>@Model.Invoice.Date</p>
+                        <p>@Model.Invoice.Description</p>
+                        <p>@Model.Invoice.IsPaid</p>
+                        <p>
+                            <a href="@Model.Invoice.FileUrl" target="_blank" class="file-icon" title="View or Download File">
+                                <i class="fas fa-file-download"></i> See
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div id="carbonSection" class="section d-none invoices">
+                    <div class="emission-container">
+                        <h4><b>CO2 emissions ratio</b></h4>
+                        <canvas id="carbonPieChart" class="chart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -559,39 +746,65 @@
             $('#statusBtn').click(function () {
                 showSection('#statusSection');
             });
-
+            $('#invoicesBtn').click(function () {
+                showSection('#invoicesSection');
+            });
+            $('#carbonBtn').click(function () {
+                showSection('#carbonSection');
+            });
             function showSection(sectionId) {
                 $('.section').addClass('d-none');
                 $(sectionId).removeClass('d-none');
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        async function getCurrentLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                document.getElementById('location').textContent = "Geolocation is not supported by this browser.";
+        document.addEventListener("DOMContentLoaded", async function () {
+            try {
+                const response = await fetch('/Clients/GetCarbonEmission/@Model.Id');
+                const data = await response.json();
+
+                const specificDeliveryEmission = data.specificDeliveryEmission;
+                const totalEmissions = data.totalEmissions;
+
+                renderCarbonPieChart(specificDeliveryEmission, totalEmissions);
+            } catch (error) {
+                console.error("Error fetching carbon emission data:", error);
             }
-        }
+        });
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => console.log("Latitude:", position.coords.latitude, "Longitude:", position.coords.longitude),
-                error => console.error("Error:", error)
-            );
-        } else {
-            console.error("Geolocation not supported by this browser.");
-        }
+        function renderCarbonPieChart(specific, total) {
+            const ctx = document.getElementById('carbonPieChart').getContext('2d');
 
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const long = position.coords.longitude;
-            fetchLocation(lat, long);
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Specific Delivery', 'All Other Deliveries'],
+                    datasets: [{
+                        label: 'Carbon Emission (kg)',
+                        data: [specific, total - specific],
+                        backgroundColor: ['#FF6384', '#E0E0E0'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.label}: ${context.raw} kg`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
-
         async function fetchLocation(lat, long) {
-            const apiKey = 'test';
+            const apiKey = 'AIzaSyDfA3_DsCdEYZeSpUwLBSenw1Gyp1VGIp4';
             const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}`;
 
             try {
@@ -600,7 +813,6 @@
 
                 if (data.results && data.results.length > 0) {
                     const address = data.results[0].formatted_address;
-                    console.log(address);
                     document.getElementById('location').textContent = address;
                 } else {
                     document.getElementById('location').textContent = "Unable to retrieve location.";
@@ -609,24 +821,10 @@
                 console.error("Error fetching location:", error);
                 document.getElementById('location').textContent = "Error fetching location.";
             }
+
+            showCurrentTime();
         }
 
-        function showError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    document.getElementById('location').textContent = "User denied the request for Geolocation.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    document.getElementById('location').textContent = "Location information is unavailable.";
-                    break;
-                case error.TIMEOUT:
-                    document.getElementById('location').textContent = "The request to get user location timed out.";
-                    break;
-                case error.UNKNOWN_ERROR:
-                    document.getElementById('location').textContent = "An unknown error occurred.";
-                    break;
-            }
-        }
 
         function initPickupMap() {
             const pickupLatLng = { lat: @Model.PickupLatitude, lng: @Model.PickupLongitude };
@@ -658,11 +856,9 @@
             });
         }
 
-        window.onload = getCurrentLocation;
-
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
