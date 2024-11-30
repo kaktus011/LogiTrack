@@ -71,7 +71,6 @@ namespace LogiTrack.Core.Services
                     PalletLength = model.PalletLength,
                     PalletHeight = model.PalletHeight,
                     PalletWidth = model.PalletWidth,
-                    RequestId = request.Id,
                     WeightOfPallets = model.WeightOfPallets,
                     PalletsAreStackable = model.PalletsAreStackable,
                     PalletVolume = model.PalletLength * model.PalletWidth * model.PalletHeight / 1000000.0
