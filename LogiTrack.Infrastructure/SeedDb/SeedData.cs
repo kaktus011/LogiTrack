@@ -332,7 +332,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 SpecialInstructions = "Handle with care",
                 IsRefrigerated = false,
                 CreatedAt = DateTime.Now.AddDays(-20),
-                //StandartCargoId = 1,
+                StandartCargoId = 1,
                 TotalWeight = 300,
                 TotalVolume = 12,
                 Kilometers = 500
@@ -356,7 +356,7 @@ namespace LogiTrack.Infrastructure.SeedDb
             SpecialInstructions = "Keep dry",
             IsRefrigerated = false,
             CreatedAt = DateTime.Now.AddDays(-21),
-            //StandartCargoId = 2,
+            StandartCargoId = 2,
             TotalWeight = 500,
             TotalVolume = 20,
             Kilometers = 1000
@@ -403,7 +403,7 @@ namespace LogiTrack.Infrastructure.SeedDb
             SpecialInstructions = "Do not compress",
             IsRefrigerated = false,
             CreatedAt = DateTime.Now.AddDays(-23),
-            //StandartCargoId = 3,
+            StandartCargoId = 3,
             TotalWeight = 150,
             TotalVolume = 8,
             Kilometers = 500
@@ -427,7 +427,7 @@ namespace LogiTrack.Infrastructure.SeedDb
             SpecialInstructions = "Fragile binding",
             IsRefrigerated = false,
             CreatedAt = DateTime.Now.AddDays(-24),
-            //StandartCargoId = 4,
+            StandartCargoId = 4,
             TotalWeight = 300,
             TotalVolume = 1.8,
             Kilometers = 1000
@@ -438,7 +438,6 @@ namespace LogiTrack.Infrastructure.SeedDb
             StandartCargo1 = new StandartCargo
             {
                 Id = 1,
-                RequestId = 1,
                 TypeOfPallet = "Euro",
                 NumberOfPallets = 5,
                 PalletLength = 120,
@@ -452,7 +451,6 @@ namespace LogiTrack.Infrastructure.SeedDb
             StandartCargo2 = new StandartCargo
             {
                 Id = 2,
-                RequestId = 2,
                 TypeOfPallet = "Industrial",
                 NumberOfPallets = 3,
                 PalletLength = 130,
@@ -466,7 +464,6 @@ namespace LogiTrack.Infrastructure.SeedDb
             StandartCargo3 = new StandartCargo
             {
                 Id = 3,
-                RequestId = 4,
                 TypeOfPallet = "Standard",
                 NumberOfPallets = 4,
                 PalletLength = 120,
@@ -537,6 +534,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 OfferDate = DateTime.Now.AddDays(-15),
                 OfferNumber = "OFFER0001",
                 Notes = "Initial offer for Request 1",
+                StartDate = DateTime.Now.AddDays(-10),
             };
             Offer2 = new Offer
             {
@@ -546,6 +544,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 OfferStatus = "Approved",
                 OfferNumber = "OFFER0002",
                 OfferDate = DateTime.Now.AddDays(-16),
+                StartDate = DateTime.Now.AddDays(-11),
                 Notes = "Offer accepted for Request 2",
             };
             Offer3 = new Offer
@@ -555,6 +554,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 FinalPrice = 1800.0m,
                 OfferStatus = "Approved",
                 OfferDate = DateTime.Now.AddDays(-15),
+                StartDate = DateTime.Now.AddDays(-10), 
                 OfferNumber = "OFFER0003",
                 Notes = "Offer approved for Request 3",
                 DeliveryId = null
@@ -565,6 +565,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 RequestId = 4, 
                 FinalPrice = 2100.0m,
                 OfferNumber = "OFFER0004",
+                StartDate = DateTime.Now.AddDays(-11),
                 OfferStatus = "Approved",
                 OfferDate = DateTime.Now.AddDays(-12),
                 Notes = "Approved offer for Request 4",
@@ -574,6 +575,7 @@ namespace LogiTrack.Infrastructure.SeedDb
             {
                 Id = 5,
                 RequestId = 5,
+                StartDate = DateTime.Now.AddDays(-12),
                 OfferNumber = "OFFER0005",
                 FinalPrice = 2300.0m,
                 OfferStatus = "Accepted",
