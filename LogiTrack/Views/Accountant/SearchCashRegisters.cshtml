@@ -9,19 +9,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Cash Registers</title>
-    
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <title>Driver Dashboard</title>
+    <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+    <script src="~/js/site.js"></script>
     <style>
         .container {
             background-color: white;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 25px 1px #0000000f !important;
             width: 96.5%;
         }
 
@@ -134,10 +135,17 @@
                 opacity: 0.8;
             }
 
-        .filtered-item-container {
+        .filtered-items-container {
             background-color: #ffff;
             margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .ref-num {
+            text-decoration: none;
+            color: black;
+            text-rendering: optimizelegibility;
+            font-size: 0.80rem;
         }
 
         .quick-search-form {
@@ -185,7 +193,7 @@
         }
 
         .file-icon {
-            color: #007bff;
+            color: #00aa87;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -210,14 +218,72 @@
 </head>
 
 <body>
-    <partial name="_Header" />
-    <partial name="Sidebars/_Sidebar-Accountant" />
-
+    <header class="header">
+        <div class="logo-name">
+            <div class="company-logo">
+                <img src="https://via.placeholder.com/50" alt="Company Logo">
+            </div>
+            <div class="company-name">LogiTrack</div>
+        </div>
+        <div class="profile-dropdown">
+            <button onclick="toggleDropdown()">
+                <i class="bi bi-person-circle"></i>
+                <span class="arrow">&#x25BC;</span>
+            </button>
+            <div class="profile-dropdown-menu" id="profileDropdown">
+                <a asp-action="Logout" asp-controller="Home">Logout</a>
+            </div>
+        </div>
+    </header>
+    <aside class="sidebar">
+        <ul>
+            <li>
+                <a asp-action="Dashboard" asp-controller="Accountant">
+                    <i class="bi bi-house-door"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-action="SearchDeliveries" asp-controller="Accountant">
+                    <i class="bi bi-truck"></i> Deliveries <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchDeliveries" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
+                        <li><a asp-action="SearchDelivery" asp-controller="Accountant"><i class="bi bi-search"></i> Search</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="SearchCashRegisters" asp-controller="Accountant">
+                    <i class="bi bi-cash"></i> Cash registers <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchCashRegisters" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
+                        <li><a asp-action="CashRegistersStatistics" asp-controller="Accountant"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a asp-action="SearchInvoices" asp-controller="Accountant">
+                    <i class="bi bi-receipt"></i> Invoices <span class="arrow">></span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a asp-action="SearchInvoices" asp-controller="Accountant"><i class="bi bi-list"></i> All</a></li>
+                        <li><a asp-action="InvoicesStatistics" asp-controller="Accountant"><i class="bi bi-bar-chart"></i> Statistics</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </aside>
     <div class="main-content">
         <div class="container mt-5">
             <div class="quick-search-header">
-                <img src="~/search_logo.png" alt="Quick Search Icon" class="search-icon" style="width: 50px; height: 50px;">
-                <h2 class="quick-search-title">Quick Search</h2>
+                <div class="search-icon">
+                    <i class="bi bi-search" style="font-size: 35px; color:#00aa87;"></i>
+                </div>
+                <h2 class="quick-search-title">Quick cash registers search</h2>
             </div>
             <p class="search-description">Please enter your search criteria</p>
 
@@ -241,7 +307,15 @@
                         <input type="date" id="EndDate" class="flatpickr" asp-for="EndDate" placeholder="Please enter">
                     </div>
                     <div class="form-group">
-                        <label asp-for="Type">Type</label>
+                        <label asp-for="MinPrice"><b>Min amount</b></label>
+                        <input type="text" id="EndDate" asp-for="MinPrice" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxPrice"><b>Max amount</b></label>
+                        <input type="text" id="EndDate" asp-for="MaxPrice" placeholder="Please enter">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Type"><b>Type</b></label>
                         <input asp-for="Type" placeholder="Please enter or select" list="typeOptions" class="form-control" />
                         <datalist id="typeOptions">
                             <option value="Vehicle"></option>
@@ -254,11 +328,12 @@
                 <div class="button-group">
                     <div class="button-group">
                         <button type="submit" class="btn"><b>GO</b></button>
-                        <a asp-action="SearchCashRegisters" asp-controler="Accountant" type="reset" class="btn btn-clear"><b>CLEAR</b></a>
+                        <a asp-action="SearchCashRegisters" asp-action="Accountant" type="reset" class="btn btn-clear"><b>CLEAR</b></a>
                     </div>
                 </div>
             </form>
         </div>
+
         <div class="filtered-items-container">
             <form asp-action="SearchCashRegisters" asp-controller="Accountant" method="get" class="quick-search-form">
                 <div class="form-group">
@@ -282,21 +357,23 @@
             {
                 @foreach (var cashRegister in Model.CashRegisters)
                 {
-                    <div class="item-card">
-                        <div class="item-info">
-                            <span>@cashRegister.DateSubmitted</span>
-                            <span>@cashRegister.DeliveryReferenceNumber</span>
-                            <span>@cashRegister.Type</span>
-                            <span class="description">@cashRegister.Description</span>
-                            <span>@cashRegister.Amount</span>
-                            <div class="cell">
-                                <a href="@cashRegister.FileUrl" target="_blank" class="file-icon" title="View or Download File">
-                                    <i class="fas fa-file-download"></i> See
-                                </a>
+                    
+                        <div class="item-card">
+                            <div class="item-info">
+                                <span>@cashRegister.DateSubmitted</span>
+                                <a asp-action="DeliveryDetails" asp-controller="Accountant" asp-route-id="@cashRegister.DeliveryId" class="ref-num">
+                                <span>@cashRegister.DeliveryReferenceNumber</span></a>
+                                <span>@cashRegister.Type</span>
+                                <span class="description">@cashRegister.Description</span>
+                                <span>@cashRegister.Amount BGN</span>
+                                <span>
+                                    <a href="@cashRegister.FileUrl" target="_blank" class="file-icon" title="View or Download File">
+                                        <i class="fas fa-file-download"></i> See
+                                    </a>
+                                </span>
                             </div>
-
                         </div>
-                    </div>
+                  
                 }
 
             }
@@ -306,7 +383,6 @@
             }
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             flatpickr(".flatpickr", {
@@ -314,8 +390,6 @@
             });
         });
     </script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
 </body>
 
 </html>
