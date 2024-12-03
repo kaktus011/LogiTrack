@@ -1,4 +1,4 @@
-using Google.Apis.Drive.v3.Data;
+﻿using Google.Apis.Drive.v3.Data;
 using LogisticsSystem.Infrastructure.Data.DataModels;
 using LogiTrack.Core.Constants;
 using LogiTrack.Core.Contracts;
@@ -350,6 +350,85 @@ namespace LogiTrack.Tests
             Assert.AreEqual("Star City, Northside ", result.Last5NewDeliveries[0].DeliveryAddress);
             Assert.AreEqual("Gotham, Westside ", result.Last5NewDeliveries[0].PickupAddress);
         }
+
+        [Test]
+        public async Task GetClientCompanyDashboardAsync_ShouldReturnCorrectData()
+        {
+            var username = "clientcompany1";
+
+            var result = await dashboardService.GetClientCompanyDashboardAsync(username);
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.LastFivePendingOffers); 
+            Assert.IsNotNull(result.LastFiveDeliveries);
+            Assert.IsNotNull(result.LastFiveInvoices);
+
+            Assert.AreEqual(1, result.LastFivePendingOffers.Count());
+            Assert.AreEqual(2, result.LastFiveDeliveries.Count());
+            Assert.AreEqual(1, result.LastFiveInvoices.Count());
+            Assert.AreEqual(0m, result.DueAmountForDeliveries);
+            Assert.AreEqual(2, result.RequestsCount);
+            Assert.AreEqual(2, result.RequestsLastMonthCount);
+            Assert.AreEqual(1, result.BookedOffersCount);
+            Assert.AreEqual(1, result.BookedOffersLastMonthCount);
+            Assert.AreEqual(1, result.InvoicesCount);
+            Assert.AreEqual(1, result.InvoiceLastMonthCount);
+        }
+        [Test]
+        public async Task GetDriverDashboardAsync_ShouldReturnCorrectData()
+        {
+            var username = "driverUser1"; 
+
+            var result = await dashboardService.GetDriverDashboardAsync(username);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(100, result.KilometersDriven); 
+            Assert.AreEqual(50, result.KilometersDrivenlastMonth); 
+            Assert.AreEqual(1, result.NewDeliveriesCount); 
+
+            Assert.IsNotNull(result.LastDeliveries);
+            Assert.AreEqual(1, result.LastDeliveries.Count); 
+            Assert.AreEqual("Test Company", result.LastDeliveries[0].ClientCompanyName);
+            Assert.AreEqual("Pickup St, Gotham, Westside", result.LastDeliveries[0].PickupAddress);
+            Assert.AreEqual("Delivery St, Star City, Northside", result.LastDeliveries[0].DeliveryAddress);
+            Assert.AreEqual("DEL123", result.LastDeliveries[0].ReferenceNumber);
+
+            Assert.IsNotNull(result.NewDeliveries);
+            Assert.AreEqual(1, result.NewDeliveries.Count);
+            Assert.AreEqual("Test Company", result.NewDeliveries[0].ClientCompanyName);
+            Assert.AreEqual("Pickup St, Gotham, Westside", result.NewDeliveries[0].PickupAddress);
+            Assert.AreEqual("Delivery St, Star City, Northside", result.NewDeliveries[0].DeliveryAddress);
+            Assert.AreEqual("DEL123", result.NewDeliveries[0].ReferenceNumber);
+        }
+
+        [Test]
+        public async Task GetLogisticsCompanyDashboardAsync_ShouldReturnCorrectData()
+        {
+            // Act
+            var result = await dashboardService.GetLogisticsCompanyDashboardAsync();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.DeliveriesCount); 
+            Assert.AreEqual(0, result.DeliveriesLastWeekCount); 
+            Assert.AreEqual(0, result.PendingRegistrationsCount);
+            Assert.AreEqual(2, result.RequestsCount); 
+            Assert.AreEqual(0, result.RequestsLastWeekCount); 
+
+            Assert.IsNotNull(result.DeliveresWithVehicles);
+            Assert.AreEqual(2, result.DeliveresWithVehicles.Count); 
+            Assert.AreEqual("ABC123", result.DeliveresWithVehicles[0].VehicleRegistrationNumber); 
+            Assert.AreEqual(" Bludhaven, Old Town", result.DeliveresWithVehicles[0].DeliveryAddress);
+            Assert.AreEqual(" Smallville, Southend", result.DeliveresWithVehicles[0].PickupAddress);
+
+            Assert.IsNotNull(result.Last5BookedOffers);
+            Assert.AreEqual(2, result.Last5BookedOffers.Count);
+            Assert.AreEqual("OFFER0002", result.Last5BookedOffers[0].ReferenceNumber); 
+            Assert.AreEqual("Smallville, Southend", result.Last5BookedOffers[0].PickupAddress);
+            Assert.AreEqual(" Bludhaven, Old Town", result.Last5BookedOffers[0].DeliveryAddress);
+        }
+
+
 
 
         [TearDown]
