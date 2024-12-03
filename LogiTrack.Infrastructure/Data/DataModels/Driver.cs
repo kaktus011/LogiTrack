@@ -29,7 +29,7 @@ namespace LogiTrack.Infrastructure.Data.DataModels
 
         [Comment("User")]
         [ForeignKey(nameof(UserId))]
-        public IdentityUser? User { get; set; }
+        public IdentityUser User { get; set; } = null!;
 
         [Comment("User identifier")]
         public string UserId { get; set; } = string.Empty;
