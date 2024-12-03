@@ -45,7 +45,7 @@ namespace LogiTrack.Tests
                 Email = "clientcompany1@example.com",
                 Id = "20450cff-816f-49c8-9546-1c603aec0301",
                 PhoneNumber = "1234567890",
-                EmailConfirmed = true
+                EmailConfirmed = true,               
             };
             clientCompanyUser.PasswordHash = hasher.HashPassword(clientCompanyUser, "clientcompany1");
             dbContext.Users.Add(clientCompanyUser);
@@ -377,7 +377,7 @@ namespace LogiTrack.Tests
         [Test]
         public async Task GetDriverDashboardAsync_ShouldReturnCorrectData()
         {
-            var username = "driverUser1"; 
+            var username = "clientcompany1"; 
 
             var result = await dashboardService.GetDriverDashboardAsync(username);
 

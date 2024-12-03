@@ -57,6 +57,7 @@ namespace LogiTrack.Core.Services
         }
         public async Task<ClientsDashboardViewModel?> GetClientCompanyDashboardAsync(string username)
         {
+            var a = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>().ToListAsync();
             var company = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>().FirstOrDefaultAsync(x => x.User.UserName == username);
             var offers = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.Offer>().OrderByDescending(x => x.OfferDate).Where(x => x.Request.ClientCompanyId == company.Id && x.OfferStatus == StatusConstants.Pending).Take(5)
                 .Select(x => new OfferForDashboardViewModel
@@ -106,6 +107,7 @@ namespace LogiTrack.Core.Services
 
         public async Task<DriverDashboardViewModel?> GetDriverDashboardAsync(string username)
         {
+            var a  = await repository.AllReadonly<Infrastructure.Data.DataModels.Driver>().ToListAsync();
             var driver = await repository.AllReadonly<Infrastructure.Data.DataModels.Driver>().Where(x => x.User.UserName == username).FirstOrDefaultAsync();
             var model = new DriverDashboardViewModel()
             {
