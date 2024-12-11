@@ -1,0 +1,36 @@
+﻿@model LogiTrack.Core.ViewModels.FuelPrice.AddFuelPriceViewModel
+@{
+    ViewData["Title"] = "Add Fuel Price";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+
+
+<div class="search-item">
+    <div class="search-header">
+        <div class="search-icon">
+            <i class="fas fa-gas-pump" style="color:#00aa87; font-size:30px;"></i>
+        </div>
+        <h2 class="search-title"><b>Add fuel price</b></h2>
+    </div>
+    <h3>Add fuel price today!</h3>
+
+    <form method="post" asp-action="AddFuelPrice" asp-controller="Speditor">
+        <div class="form-group">
+            <label asp-for="Price"><b>Price</b></label>
+            <input type="text" asp-for="Price" class="form-control" placeholder="Please enter" />
+        </div>
+
+        <button type="submit" class="btn-primary"><b>SUBMIT</b></button>
+    </form>
+</div>
+<style>
+    .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 19px;
+    }
+</style>

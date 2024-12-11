@@ -1,0 +1,77 @@
+﻿@model LogiTrack.Core.ViewModels.Driver.AddDriverViewModel
+@{
+    ViewData["Title"] = "Add Driver";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+
+<div class="search-item">
+    <div class="search-header">
+        <div class="search-icon">
+            <i class="fas fa-paper-plane" style="color:#00aa87; font-size:30px;"></i>
+        </div>
+        <h2 class="search-title"><b>Add driver</b></h2>
+    </div>
+    <h3>Add your new driver now!</h3>
+
+    <form method="post" asp-action="AddDriver" asp-controller="Speditor">
+        <h4>General details</h4>
+        <div class="form-group">
+            <label asp-for="Name"><b>Name</b></label>
+            <input type="text" asp-for="Name" class="form-control" placeholder="Please enter" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Age"><b>Age</b></label>
+            <input type="text" asp-for="Age" class="form-control" placeholder="Please enter" />
+        </div>
+        <div class="form-group">
+            <label asp-for="PhoneNumber"><b>Phone</b></label>
+            <input type="text" asp-for="PhoneNumber" class="form-control" placeholder="Please enter" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Preferrences"><b>Preferrences</b></label>
+            <input type="text" asp-for="Preferrences" class="form-control" placeholder="Please enter" />
+        </div>
+        <h4>License</h4>
+        <div class="row">
+            <div class="form-group">
+                <label asp-for="LicenseNumber"><b>Number</b></label>
+                <input type="text" asp-for="LicenseNumber" class="form-control" placeholder="Please enter" />
+            </div>
+            <div class="form-group">
+                <label asp-for="LicenseExpiryDate"><b>Expiry date</b></label>
+                <input type="text" asp-for="LicenseExpiryDate" class="form-control" placeholder="Please enter" />
+            </div>
+        </div>
+        <h4>Experience</h4>
+        <div class="row">
+            <div class="form-group">
+                <label asp-for="YearOfExperience"><b>Years</b></label>
+                <input type="text" asp-for="YearOfExperience" class="form-control" placeholder="Please enter" />
+            </div>
+            <div class="form-group">
+                <label asp-for="MonthsOfExperience"><b>Month</b></label>
+                <input type="text" asp-for="MonthsOfExperience" class="form-control" placeholder="Please enter" />
+            </div>
+        </div>
+        <button type="submit" class="btn-primary"><b>SUBMIT</b></button>
+    </form>
+</div>
+<style>
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 19px;
+    }
+
+    h4 {
+        color: #00aa87;
+        border-bottom: 15px;
+        margin-top: 0;
+    }
+
+</style>
