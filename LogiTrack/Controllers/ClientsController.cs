@@ -1,7 +1,6 @@
 ﻿using LogiTrack.Core.Contracts;
 using LogiTrack.Core.ViewModels.Clients;
 using static LogiTrack.Core.Constants.MessageConstants.ErrorMessages;
-using static LogiTrack.Core.Constants.UserRolesConstants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using LogiTrack.Core.Services;
@@ -13,7 +12,7 @@ using LogiTrack.Core.ViewModels.Delivery;
 
 namespace LogiTrack.Controllers
 {
-    public class ClientsController : Controller
+	public class ClientsController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly IClientsService clientsService;
@@ -93,8 +92,12 @@ namespace LogiTrack.Controllers
                 ModelState.AddModelError("PhoneNumber", PhoneNumberAlreadyExistsErrorMessage);
                 return View(model);
             }
+            if (await userService.UserWithPhoneNumberExistsAsync(model.AlternativePhoneNumber))
+            {
+                ModelState.AddModelError("AlternativePhoneNumber", PhoneNumberAlreadyExistsErrorMessage);
+                return View(model);
+            }
             var user = await userService.RegisterUserAsync(model);
-            await userManager.AddToRoleAsync(user, ClientCompany);
             await userService.RegisterClientCompanyAsync(model, user);
 
             return RedirectToAction(nameof(SuccessfullRegistration));
@@ -294,6 +297,7 @@ namespace LogiTrack.Controllers
                 }
             }
             var result = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+         
             if (result.Succeeded)
             {
                 return RedirectToAction(nameof(CompanyDetails));
@@ -542,7 +546,7 @@ namespace LogiTrack.Controllers
              *{
              *  return BadRequest(ClientCompanyNotFoundErrorMessage);
              }*/
-            var model = await statisticsService.GetRequestStatisticsForCompanyAsync("clientcompany1");
+            var model = await statisticsService.GetRequestStatisticsForCompanyAsync(username);
             return View(model);
         }
 
@@ -710,7 +714,5 @@ namespace LogiTrack.Controllers
             var model = await statisticsService.GetCargoRatiosForCompanyAsync(username);
             return Json(new { standardCount = model.Item1, nonStandardCount = model.Item2});
         }
-
-        //TODO: Add method for booking offer
     }
 }
