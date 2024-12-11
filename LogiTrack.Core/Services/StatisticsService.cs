@@ -1,12 +1,10 @@
 ﻿using LogisticsSystem.Infrastructure.Data.DataModels;
 using LogiTrack.Core.Constants;
 using LogiTrack.Core.Contracts;
-using LogiTrack.Core.ViewModels.CashRegister;
 using LogiTrack.Core.ViewModels.Clients;
 using LogiTrack.Core.ViewModels.Delivery;
 using LogiTrack.Core.ViewModels.Driver;
 using LogiTrack.Core.ViewModels.FuelPrice;
-using LogiTrack.Core.ViewModels.Invoice;
 using LogiTrack.Core.ViewModels.Offer;
 using LogiTrack.Core.ViewModels.Request;
 using LogiTrack.Core.ViewModels.Vehicle;
@@ -16,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiTrack.Core.Services
 {
-    public class StatisticsService : IStatisticsService
+	public class StatisticsService : IStatisticsService
     {
         private readonly IRepository repository;
 
@@ -602,7 +600,7 @@ namespace LogiTrack.Core.Services
             var fuelPrices = await repository.AllReadonly<FuelPrice>().ToListAsync();
             return new FuelPricesStatisticsViewModel
             {
-                TodayPrice = fuelPrices.Where(x => x.Date.Date == DateTime.Now.Date).ToString(),
+                TodayPrice = fuelPrices.Where(x => x.Date == DateTime.Now).ToString(),
                 AveragePrice = fuelPrices.Average(x => x.Price).ToString(),
                 MaxPrice = fuelPrices.Max(x => x.Price).ToString(),
                 MinPrice = fuelPrices.Min(x => x.Price).ToString(),
@@ -615,7 +613,7 @@ namespace LogiTrack.Core.Services
             var fuelPrices = await repository.AllReadonly<FuelPrice>().ToListAsync();
             var maxPrice = fuelPrices.Max(x => x.Price);
             var todayPrice = fuelPrices.FirstOrDefault(x => x.Date.Date == DateTime.Now.Date)?.Price ?? 0;
-            return (maxPrice, todayPrice);
+            return (todayPrice, maxPrice);
         }
 
         public async Task<Dictionary<int, decimal>> GetMonthlyFuelPricesAsync()

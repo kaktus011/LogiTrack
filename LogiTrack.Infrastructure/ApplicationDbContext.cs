@@ -23,8 +23,8 @@ namespace LogiTrack.Infrastructure
             builder.ApplyConfiguration(new ClientCompanyConfiguration());
             builder.ApplyConfiguration(new InvoiceConnfiguration());
             builder.ApplyConfiguration(new OfferConfiguration());
-            builder.ApplyConfiguration(new RequestConfiguration());
             builder.ApplyConfiguration(new StandartCargoConfiguration());
+            builder.ApplyConfiguration(new RequestConfiguration());
             builder.ApplyConfiguration(new NonStandardCargoConfiguration());
             builder.ApplyConfiguration(new DriverConfiguration());
             builder.ApplyConfiguration(new DeliveryConfiguration());
@@ -56,5 +56,6 @@ namespace LogiTrack.Infrastructure
         public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<Rating> Ratings { get; set; } = null!;
         public DbSet<ReservedForDelivery> ReservedForDeliveries { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
     }
 }
