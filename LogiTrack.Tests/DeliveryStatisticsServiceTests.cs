@@ -1,35 +1,36 @@
-﻿using Google.Apis.Drive.v3.Data;
-using LogisticsSystem.Infrastructure.Data.DataModels;
-using LogiTrack.Core.Constants;
+﻿using LogisticsSystem.Infrastructure.Data.DataModels;
 using LogiTrack.Core.Contracts;
 using LogiTrack.Core.Services;
-using LogiTrack.Infrastructure;
 using LogiTrack.Infrastructure.Data.DataModels;
 using LogiTrack.Infrastructure.Repository;
+using LogiTrack.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using static LogiTrack.Infrastructure.Data.DataConstants.DataModelConstants;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LogiTrack.Tests
 {
     [TestFixture]
-    public class DashboardServiceTests
+    public class DeliveryStatisticsServiceTests
     {
         private IRepository repository;
-        private IDashboardService dashboardService;
+        private IDeliveryStatisticsService deliveryStatisticsService;
         private ApplicationDbContext dbContext;
 
         [SetUp]
         public void Setup()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+                         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                          .Options;
 
             dbContext = new ApplicationDbContext(options);
             repository = new Repository(dbContext);
-            dashboardService = new DashboardService(repository);
+            deliveryStatisticsService = new DeliveryStatisticsService(repository);
             SeedData();
         }
 
@@ -45,7 +46,7 @@ namespace LogiTrack.Tests
                 Email = "clientcompany1@example.com",
                 Id = "20450cff-816f-49c8-0000-1c603aec0301",
                 PhoneNumber = "1234567890",
-                EmailConfirmed = true,               
+                EmailConfirmed = true,
             };
             clientCompanyUser.PasswordHash = hasher.HashPassword(clientCompanyUser, "clientcompany1");
             dbContext.Users.Add(clientCompanyUser);
@@ -61,7 +62,7 @@ namespace LogiTrack.Tests
                 Industry = "Manufacturing",
                 Address = new Infrastructure.Data.DataModels.Address { Id = 1, Street = "123 Main St", County = "Central", City = "Metropolis", PostalCode = "10001" },
                 CreatedAt = DateTime.Now.AddDays(-20),
-                User  =  clientCompanyUser
+                User = clientCompanyUser
             };
             dbContext.ClientCompanies.Add(clientCompany);
             dbContext.SaveChangesAsync();
@@ -337,137 +338,66 @@ namespace LogiTrack.Tests
         }
 
         [Test]
-        public async Task GetAccountantDashboardAsync_ShouldReturnCorrectData()
+        public async Task GetDestinationTypesForDriverAsync_ReturnsCorrectCounts()
         {
-            var result = await dashboardService.GetAccountantDashboardAsync();
+            var username = dbContext.Users.First().UserName;
+            var service = new DeliveryStatisticsService(repository);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.NewFinishedDeliveriesFromLastWeek); 
-            Assert.AreEqual(0, result.NotPaidDeliveriesCount); 
-            Assert.AreEqual(1, result.InvoicesCount); 
-            Assert.AreEqual(1, result.InvoicesCountFromLastMonth);
-            Assert.AreEqual("0", result.DueAmountForDeliveries); 
-            Assert.AreEqual(0, result.Last5NotPaidInvoices.Count);
-            Assert.AreEqual(1, result.Last5NewDeliveries.Count);
-            Assert.AreEqual("Star City, Northside ", result.Last5NewDeliveries[0].DeliveryAddress);
-            Assert.AreEqual("Gotham, Westside ", result.Last5NewDeliveries[0].PickupAddress);
+            var result = await service.GetDestinationTypesForDriverAsync(username);
+
+            Assert.AreEqual(1, result.domesticDeliveries);
+            Assert.AreEqual(1, result.internationalDeliveries);
         }
 
         [Test]
-        public async Task GetClientCompanyDashboardAsync_ShouldReturnCorrectData()
+        public async Task GetDeliveriesCountForDriverAsync_ReturnsCorrectCounts()
         {
-            var username = "clientcompany1";
+            var username = dbContext.Users.First().UserName;
+            var service = new DeliveryStatisticsService(repository);
 
-            var result = await dashboardService.GetClientCompanyDashboardAsync(username);
+            var (months, counts) = await service.GetDeliveriesCountForDriverAsync(username);
 
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.LastFivePendingOffers); 
-            Assert.IsNotNull(result.LastFiveDeliveries);
-            Assert.IsNotNull(result.LastFiveInvoices);
-
-            Assert.AreEqual(1, result.LastFivePendingOffers.Count());
-            Assert.AreEqual(2, result.LastFiveDeliveries.Count());
-            Assert.AreEqual(1, result.LastFiveInvoices.Count());
-            Assert.AreEqual(0m, result.DueAmountForDeliveries);
-            Assert.AreEqual(2, result.RequestsCount);
-            Assert.AreEqual(2, result.RequestsLastMonthCount);
-            Assert.AreEqual(1, result.BookedOffersCount);
-            Assert.AreEqual(1, result.BookedOffersLastMonthCount);
-            Assert.AreEqual(1, result.InvoicesCount);
-            Assert.AreEqual(1, result.InvoiceLastMonthCount);
-        }
-        [Test]
-        public async Task GetDriverDashboardAsync_ShouldReturnCorrectData()
-        {
-            var username = "clientcompany1";
-
-            var result = await dashboardService.GetDriverDashboardAsync(username);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1500.0d, result.KilometersDriven);
-            Assert.AreEqual(0.0d, result.KilometersDrivenlastMonth);
-            Assert.AreEqual(0, result.NewDeliveriesCount);
-
-            Assert.IsNotNull(result.LastDeliveries);
-            Assert.GreaterOrEqual(result.LastDeliveries.Count, 2);
-            if (result.LastDeliveries.Count >= 2)
-            {
-                Assert.AreEqual("Client Company 1", result.LastDeliveries[0].ClientCompanyName);
-                Assert.AreEqual("456 Side St, Gotham, Westside", result.LastDeliveries[0].PickupAddress);
-                Assert.AreEqual("789 Elm St, Star City, Northside", result.LastDeliveries[0].DeliveryAddress);
-                Assert.AreEqual("DEL0001", result.LastDeliveries[0].ReferenceNumber);
-            }
-
-            Assert.IsNotNull(result.NewDeliveries);
-            Assert.GreaterOrEqual(result.NewDeliveries.Count, 0);
-            if (result.NewDeliveries.Count > 0)
-            {
-                Assert.AreEqual("Test Company", result.NewDeliveries[0].ClientCompanyName);
-                Assert.AreEqual("Pickup St, Gotham, Westside", result.NewDeliveries[0].PickupAddress);
-                Assert.AreEqual("Delivery St, Star City, Northside", result.NewDeliveries[0].DeliveryAddress);
-                Assert.AreEqual("DEL123", result.NewDeliveries[0].ReferenceNumber);
-            }
+            Assert.AreEqual(12, months.Length);
+            Assert.AreEqual(12, counts.Count);
+            Assert.AreEqual(0, counts[0]); 
         }
 
-
         [Test]
-        public async Task GetLogisticsCompanyDashboardAsync_ShouldReturnCorrectData()
+        public async Task GetDeliveryTimesForDriverAsync_ReturnsCorrectStatistics()
         {
-            var result = await dashboardService.GetLogisticsCompanyDashboardAsync();
+            var username = dbContext.Users.First().UserName;
+            var service = new DeliveryStatisticsService(repository);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.DeliveriesCount); 
-            Assert.AreEqual(0, result.DeliveriesLastWeekCount); 
-            Assert.AreEqual(0, result.PendingRegistrationsCount);
-            Assert.AreEqual(2, result.RequestsCount); 
-            Assert.AreEqual(0, result.RequestsLastWeekCount); 
+            var (successRate, averageDelay) = await service.GetDeliveryTimesForDriverAsync(username);
 
-            Assert.IsNotNull(result.DeliveresWithVehicles);
-            Assert.AreEqual(2, result.DeliveresWithVehicles.Count); 
-            Assert.AreEqual("ABC123", result.DeliveresWithVehicles[0].VehicleRegistrationNumber); 
-            Assert.AreEqual(" Bludhaven, Old Town", result.DeliveresWithVehicles[0].DeliveryAddress);
-            Assert.AreEqual(" Smallville, Southend", result.DeliveresWithVehicles[0].PickupAddress);
-
-            Assert.IsNotNull(result.Last5BookedOffers);
-            Assert.AreEqual(2, result.Last5BookedOffers.Count);
-            Assert.AreEqual("OFFER0002", result.Last5BookedOffers[0].ReferenceNumber); 
-            Assert.AreEqual("Smallville, Southend", result.Last5BookedOffers[0].PickupAddress);
-            Assert.AreEqual(" Bludhaven, Old Town", result.Last5BookedOffers[0].DeliveryAddress);
+            Assert.AreEqual(50, successRate, "Unexpected success rate");
+            Assert.AreEqual(0, averageDelay, "Unexpected average delay");
         }
+
         [Test]
-        public async Task GetSpeditorDashboardAsync_ShouldReturnCorrectData()
+        public async Task GetCashRegisterStatisticsAsync_ReturnsCorrectStatistics()
         {
-            var result = await dashboardService.GetSpeditorDashboardAsync();
+            var service = new DeliveryStatisticsService(repository);
+
+            var result = await service.GetCashRegisterStatisticsAsync();
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.TotalRequests); 
-            Assert.AreEqual(2, result.TotalOffers); 
-            Assert.AreEqual(0, result.NewRequests); 
-            Assert.AreEqual(1, result.AcceptedOffers);
-            Assert.AreEqual(1, result.AvailableDrivers); 
-            Assert.AreEqual(0, result.AvailableVehicles); 
-            Assert.AreEqual(2.50m, result.FuelPrice); 
+            Assert.AreEqual(2, result.TotalCashRegisters);
+            Assert.AreEqual(150m, result.TotalAdditionalCosts);
+            Assert.AreEqual(1, result.DeliveriesWithAdditionalCosts);
+        }
 
-            Assert.IsNotNull(result.LastFivePendingOffers);
-            Assert.AreEqual(1, result.LastFivePendingOffers.Count()); 
-            Assert.AreEqual("OFFER0001", result.LastFivePendingOffers.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFivePendingOffers.ToList()[0].PickupAddress);
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFivePendingOffers.ToList()[0].DeliveryAddress); 
+        [Test]
+        public async Task GetInvoicesStatisticsAsync_ReturnsCorrectStatistics()
+        {
+            var service = new DeliveryStatisticsService(repository);
 
-            Assert.IsNotNull(result.LastFiveDeliveries);
-            Assert.AreEqual(2, result.LastFiveDeliveries.Count()); 
-            Assert.AreEqual("DEL0001", result.LastFiveDeliveries.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFiveDeliveries.ToList()[0].PickupAddress); 
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFiveDeliveries.ToList()[0].DeliveryAddress); 
+            var result = await service.GetInvoicesStatisticsAsync();
 
-            Assert.IsNotNull(result.LastFiveNewRequests);
-            Assert.AreEqual(1, result.LastFiveNewRequests.Count()); 
-            Assert.AreEqual("R0001", result.LastFiveNewRequests.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFiveNewRequests.ToList()[0].PickupAddress);
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFiveNewRequests.ToList()[0].DeliveryAddress); 
-            Assert.AreEqual("5", result.LastFiveNewRequests.ToList()[0].NumberOfItems); 
-            Assert.AreEqual("Client Company 1", result.LastFiveNewRequests.ToList()[0].CompanyName); 
-            Assert.AreEqual("500", result.LastFiveNewRequests.ToList()[0].Price); 
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1200, result.PaidAmount);
+            Assert.AreEqual(0, result.OverdueAmount);
+            Assert.AreEqual(0, result.ClientsWithOverdueInvoices);
         }
 
         [TearDown]

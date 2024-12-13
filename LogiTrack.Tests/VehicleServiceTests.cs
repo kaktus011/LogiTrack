@@ -1,35 +1,37 @@
-﻿using Google.Apis.Drive.v3.Data;
-using LogisticsSystem.Infrastructure.Data.DataModels;
-using LogiTrack.Core.Constants;
+﻿using LogisticsSystem.Infrastructure.Data.DataModels;
 using LogiTrack.Core.Contracts;
 using LogiTrack.Core.Services;
-using LogiTrack.Infrastructure;
 using LogiTrack.Infrastructure.Data.DataModels;
 using LogiTrack.Infrastructure.Repository;
+using LogiTrack.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using static LogiTrack.Infrastructure.Data.DataConstants.DataModelConstants;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using LogiTrack.Core.ViewModels.Vehicle;
 
 namespace LogiTrack.Tests
 {
     [TestFixture]
-    public class DashboardServiceTests
+    public class VehicleServiceTests
     {
         private IRepository repository;
-        private IDashboardService dashboardService;
+        private IVehicleService vehicleService;
         private ApplicationDbContext dbContext;
 
         [SetUp]
         public void Setup()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
+                         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                          .Options;
 
             dbContext = new ApplicationDbContext(options);
             repository = new Repository(dbContext);
-            dashboardService = new DashboardService(repository);
+            vehicleService = new VehicleService(repository);
             SeedData();
         }
 
@@ -45,7 +47,7 @@ namespace LogiTrack.Tests
                 Email = "clientcompany1@example.com",
                 Id = "20450cff-816f-49c8-0000-1c603aec0301",
                 PhoneNumber = "1234567890",
-                EmailConfirmed = true,               
+                EmailConfirmed = true,
             };
             clientCompanyUser.PasswordHash = hasher.HashPassword(clientCompanyUser, "clientcompany1");
             dbContext.Users.Add(clientCompanyUser);
@@ -61,7 +63,7 @@ namespace LogiTrack.Tests
                 Industry = "Manufacturing",
                 Address = new Infrastructure.Data.DataModels.Address { Id = 1, Street = "123 Main St", County = "Central", City = "Metropolis", PostalCode = "10001" },
                 CreatedAt = DateTime.Now.AddDays(-20),
-                User  =  clientCompanyUser
+                User = clientCompanyUser
             };
             dbContext.ClientCompanies.Add(clientCompany);
             dbContext.SaveChangesAsync();
@@ -337,138 +339,139 @@ namespace LogiTrack.Tests
         }
 
         [Test]
-        public async Task GetAccountantDashboardAsync_ShouldReturnCorrectData()
+        public async Task VehicleWithIdExistsAsync_ShouldReturnTrue_WhenVehicleExists()
         {
-            var result = await dashboardService.GetAccountantDashboardAsync();
+            var existingVehicleId = dbContext.Vehicles.First().Id;
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.NewFinishedDeliveriesFromLastWeek); 
-            Assert.AreEqual(0, result.NotPaidDeliveriesCount); 
-            Assert.AreEqual(1, result.InvoicesCount); 
-            Assert.AreEqual(1, result.InvoicesCountFromLastMonth);
-            Assert.AreEqual("0", result.DueAmountForDeliveries); 
-            Assert.AreEqual(0, result.Last5NotPaidInvoices.Count);
-            Assert.AreEqual(1, result.Last5NewDeliveries.Count);
-            Assert.AreEqual("Star City, Northside ", result.Last5NewDeliveries[0].DeliveryAddress);
-            Assert.AreEqual("Gotham, Westside ", result.Last5NewDeliveries[0].PickupAddress);
+            var result = await vehicleService.VehicleWithIdExistsAsync(existingVehicleId);
+
+            Assert.IsTrue(result);
         }
 
         [Test]
-        public async Task GetClientCompanyDashboardAsync_ShouldReturnCorrectData()
+        public async Task VehicleWithIdExistsAsync_ShouldReturnFalse_WhenVehicleDoesNotExist()
         {
-            var username = "clientcompany1";
+            var nonExistingVehicleId = -1;
 
-            var result = await dashboardService.GetClientCompanyDashboardAsync(username);
+            var result = await vehicleService.VehicleWithIdExistsAsync(nonExistingVehicleId);
 
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.LastFivePendingOffers); 
-            Assert.IsNotNull(result.LastFiveDeliveries);
-            Assert.IsNotNull(result.LastFiveInvoices);
-
-            Assert.AreEqual(1, result.LastFivePendingOffers.Count());
-            Assert.AreEqual(2, result.LastFiveDeliveries.Count());
-            Assert.AreEqual(1, result.LastFiveInvoices.Count());
-            Assert.AreEqual(0m, result.DueAmountForDeliveries);
-            Assert.AreEqual(2, result.RequestsCount);
-            Assert.AreEqual(2, result.RequestsLastMonthCount);
-            Assert.AreEqual(1, result.BookedOffersCount);
-            Assert.AreEqual(1, result.BookedOffersLastMonthCount);
-            Assert.AreEqual(1, result.InvoicesCount);
-            Assert.AreEqual(1, result.InvoiceLastMonthCount);
+            Assert.IsFalse(result);
         }
+
         [Test]
-        public async Task GetDriverDashboardAsync_ShouldReturnCorrectData()
+        public async Task GetVehicleIdByRegistrationNumberAsync_ShouldReturnCorrectId_WhenRegistrationNumberExists()
         {
-            var username = "clientcompany1";
+            var registrationNumber = "ABC123";
 
-            var result = await dashboardService.GetDriverDashboardAsync(username);
+            var result = await vehicleService.GetVehicleIdByRegistrationNumberAsync(registrationNumber);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1500.0d, result.KilometersDriven);
-            Assert.AreEqual(0.0d, result.KilometersDrivenlastMonth);
-            Assert.AreEqual(0, result.NewDeliveriesCount);
+            var expectedId = dbContext.Vehicles.First(v => v.RegistrationNumber == registrationNumber).Id;
+            Assert.AreEqual(expectedId, result);
+        }
 
-            Assert.IsNotNull(result.LastDeliveries);
-            Assert.GreaterOrEqual(result.LastDeliveries.Count, 2);
-            if (result.LastDeliveries.Count >= 2)
+        [Test]
+        public async Task GetVehicleIdByRegistrationNumberAsync_ShouldReturnZero_WhenRegistrationNumberDoesNotExist()
+        {
+            var nonExistingRegistrationNumber = "XYZ789";
+
+            var result = await vehicleService.GetVehicleIdByRegistrationNumberAsync(nonExistingRegistrationNumber);
+
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public async Task GetVehiclesBySearchTermAsync_WithMatchingSearchTerm_ReturnsFilteredVehicles()
+        {
+            var searchTerm = "Truck"; 
+
+            var result = await vehicleService.GetVehiclesBySearchTermAsync(searchTerm);
+
+            Assert.That(result.Count, Is.GreaterThan(0)); 
+            Assert.That(result.Any(x => x.VehicleType.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)), Is.True);
+        }
+
+        [Test]
+        public async Task VehicleWithRegistrationNumberExistsAsync_WithExistingId_ReturnsTrue()
+        {
+            var existingVehicleId = 1; 
+
+            var result = await vehicleService.VehicleWithRegistrationNumberExistsAsync(existingVehicleId);
+
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public async Task VehicleWithRegistrationNumberExistsAsync_WithNonExistingId_ReturnsFalse()
+        {
+            var nonExistingVehicleId = 9999; 
+
+            var result = await vehicleService.VehicleWithRegistrationNumberExistsAsync(nonExistingVehicleId);
+
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task AddVehicleAsync_WithValidData_AddsVehicle()
+        {
+            var model = new AddVehicleViewModel
             {
-                Assert.AreEqual("Client Company 1", result.LastDeliveries[0].ClientCompanyName);
-                Assert.AreEqual("456 Side St, Gotham, Westside", result.LastDeliveries[0].PickupAddress);
-                Assert.AreEqual("789 Elm St, Star City, Northside", result.LastDeliveries[0].DeliveryAddress);
-                Assert.AreEqual("DEL0001", result.LastDeliveries[0].ReferenceNumber);
-            }
+                RegistrationNumber = "NEW123",
+                VehicleType = "NewTruck",
+                Length = 12,
+                Width = 6,
+                Height = 5,
+                MaxWeightCapacity = 1500,
+                EmissionFactor = 1.0,
+                FuelConsumptionPer100Km = 15
+            };
 
-            Assert.IsNotNull(result.NewDeliveries);
-            Assert.GreaterOrEqual(result.NewDeliveries.Count, 0);
-            if (result.NewDeliveries.Count > 0)
+            await vehicleService.AddVehicleAsync(model);
+
+            var addedVehicle = await repository.AllReadonly<Vehicle>()
+                .FirstOrDefaultAsync(x => x.RegistrationNumber == "NEW123");
+
+            Assert.NotNull(addedVehicle);
+            Assert.That(addedVehicle.VehicleType, Is.EqualTo("NewTruck"));
+        }
+
+        [Test]
+        public async Task GetVehicleForEditAsync_WithExistingId_ReturnsVehicleViewModel()
+        {
+            var existingVehicleId = 1; 
+
+            var result = await vehicleService.GetVehicleForEditAsync(existingVehicleId);
+
+            Assert.NotNull(result);
+            Assert.That(result.RegistrationNumber, Is.Not.Null.And.Not.Empty);
+        }
+
+        [Test]
+        public async Task EditVehicleAsync_WithValidData_UpdatesVehicle()
+        {
+            var existingVehicleId = 1; 
+
+            var model = new AddVehicleViewModel
             {
-                Assert.AreEqual("Test Company", result.NewDeliveries[0].ClientCompanyName);
-                Assert.AreEqual("Pickup St, Gotham, Westside", result.NewDeliveries[0].PickupAddress);
-                Assert.AreEqual("Delivery St, Star City, Northside", result.NewDeliveries[0].DeliveryAddress);
-                Assert.AreEqual("DEL123", result.NewDeliveries[0].ReferenceNumber);
-            }
+                RegistrationNumber = "UPDATED123",
+                VehicleType = "UpdatedTruck",
+                Length = 10,
+                Width = 5,
+                Height = 4,
+                MaxWeightCapacity = 2000,
+                EmissionFactor = 0.8,
+                FuelConsumptionPer100Km = 12
+            };
+
+            await vehicleService.EditVehicleAsync(existingVehicleId, model);
+
+            var updatedVehicle = await repository.AllReadonly<Vehicle>()
+                .FirstOrDefaultAsync(x => x.Id == existingVehicleId);
+
+            Assert.NotNull(updatedVehicle);
+            Assert.That(updatedVehicle.RegistrationNumber, Is.EqualTo("UPDATED123"));
+            Assert.That(updatedVehicle.VehicleType, Is.EqualTo("UpdatedTruck"));
         }
 
-
-        [Test]
-        public async Task GetLogisticsCompanyDashboardAsync_ShouldReturnCorrectData()
-        {
-            var result = await dashboardService.GetLogisticsCompanyDashboardAsync();
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.DeliveriesCount); 
-            Assert.AreEqual(0, result.DeliveriesLastWeekCount); 
-            Assert.AreEqual(0, result.PendingRegistrationsCount);
-            Assert.AreEqual(2, result.RequestsCount); 
-            Assert.AreEqual(0, result.RequestsLastWeekCount); 
-
-            Assert.IsNotNull(result.DeliveresWithVehicles);
-            Assert.AreEqual(2, result.DeliveresWithVehicles.Count); 
-            Assert.AreEqual("ABC123", result.DeliveresWithVehicles[0].VehicleRegistrationNumber); 
-            Assert.AreEqual(" Bludhaven, Old Town", result.DeliveresWithVehicles[0].DeliveryAddress);
-            Assert.AreEqual(" Smallville, Southend", result.DeliveresWithVehicles[0].PickupAddress);
-
-            Assert.IsNotNull(result.Last5BookedOffers);
-            Assert.AreEqual(2, result.Last5BookedOffers.Count);
-            Assert.AreEqual("OFFER0002", result.Last5BookedOffers[0].ReferenceNumber); 
-            Assert.AreEqual("Smallville, Southend", result.Last5BookedOffers[0].PickupAddress);
-            Assert.AreEqual(" Bludhaven, Old Town", result.Last5BookedOffers[0].DeliveryAddress);
-        }
-        [Test]
-        public async Task GetSpeditorDashboardAsync_ShouldReturnCorrectData()
-        {
-            var result = await dashboardService.GetSpeditorDashboardAsync();
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.TotalRequests); 
-            Assert.AreEqual(2, result.TotalOffers); 
-            Assert.AreEqual(0, result.NewRequests); 
-            Assert.AreEqual(1, result.AcceptedOffers);
-            Assert.AreEqual(1, result.AvailableDrivers); 
-            Assert.AreEqual(0, result.AvailableVehicles); 
-            Assert.AreEqual(2.50m, result.FuelPrice); 
-
-            Assert.IsNotNull(result.LastFivePendingOffers);
-            Assert.AreEqual(1, result.LastFivePendingOffers.Count()); 
-            Assert.AreEqual("OFFER0001", result.LastFivePendingOffers.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFivePendingOffers.ToList()[0].PickupAddress);
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFivePendingOffers.ToList()[0].DeliveryAddress); 
-
-            Assert.IsNotNull(result.LastFiveDeliveries);
-            Assert.AreEqual(2, result.LastFiveDeliveries.Count()); 
-            Assert.AreEqual("DEL0001", result.LastFiveDeliveries.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFiveDeliveries.ToList()[0].PickupAddress); 
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFiveDeliveries.ToList()[0].DeliveryAddress); 
-
-            Assert.IsNotNull(result.LastFiveNewRequests);
-            Assert.AreEqual(1, result.LastFiveNewRequests.Count()); 
-            Assert.AreEqual("R0001", result.LastFiveNewRequests.ToList()[0].ReferenceNumber); 
-            Assert.AreEqual("456 Side St, Gotham, Westside", result.LastFiveNewRequests.ToList()[0].PickupAddress);
-            Assert.AreEqual("789 Elm St, Star City, Northside", result.LastFiveNewRequests.ToList()[0].DeliveryAddress); 
-            Assert.AreEqual("5", result.LastFiveNewRequests.ToList()[0].NumberOfItems); 
-            Assert.AreEqual("Client Company 1", result.LastFiveNewRequests.ToList()[0].CompanyName); 
-            Assert.AreEqual("500", result.LastFiveNewRequests.ToList()[0].Price); 
-        }
 
         [TearDown]
         public void TearDown()
