@@ -120,6 +120,7 @@ namespace LogiTrack.Core.Services
 
         public async Task<DriverDashboardViewModel?> GetDriverDashboardAsync(string username)
         {
+            var driver = await repository.AllReadonly<Infrastructure.Data.DataModels.Driver>().Where(x => x.User.UserName == username).FirstOrDefaultAsync();
             var deliveryQuery = repository.AllReadonly<Delivery>().Include(x => x.Offer).ThenInclude(x => x.Request).Where(x => x.Driver.User.UserName == username);
             var model = new DriverDashboardViewModel()
             {
