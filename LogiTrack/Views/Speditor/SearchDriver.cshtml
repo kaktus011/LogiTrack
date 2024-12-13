@@ -1,0 +1,34 @@
+﻿@model LogiTrack.Core.ViewModels.Driver.SearchDriverByLicenseNumberViewModel
+@{
+    ViewData["Title"] = "Search Driver";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+
+<div class="search-item">
+    <div class="search-header">
+        <div class="search-icon">
+            <i class="bi bi-search" style="font-size: 35px; color:#00aa87;"></i>
+        </div>                
+        <h2 class="search-title"><b>Search driver</b></h2>
+    </div>
+
+    <h3>Please enter driver's license number</h3>
+
+    @if (TempData["NotFound"] != null)
+    {
+        <div class="alert alert-danger">
+            Delivery not found!
+        </div>
+    }
+
+    <form asp-action="SearchDriver" asp-controller="Speditor" method="post">
+        <div class="form-group">
+            <label asp-for="LicenseNumber"><b>License number</b></label>
+            <input asp-for="LicenseNumber" type="text" id="ReferenceNumber" class="form-control" placeholder="Please enter" />
+            <span asp-validation-for="LicenseNumber" class="text-danger" id="ReferenceNumberError"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><b>SEARCH</b></button>
+    </form>
+</div>
+

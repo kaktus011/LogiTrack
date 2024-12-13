@@ -23,7 +23,7 @@ namespace LogiTrack.Infrastructure.Data.DataModels
 
         [Comment("Pallet length")]
         [Range(PalletMetricsValue, PalletMetricsMaxValue)]
-        public double? PalletLength { get; set; } //in cm
+        public double? PalletLength { get; set; } 
 
         [Comment("Pallet width")]
         [Range(PalletMetricsValue, PalletMetricsMaxValue)]

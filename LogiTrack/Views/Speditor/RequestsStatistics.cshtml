@@ -1,0 +1,67 @@
+﻿@model LogiTrack.Core.ViewModels.Request.RequestStatisticsForClientViewModel
+@{
+    ViewData["Title"] = "Request Statistics";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+<div class="chart-container">
+    <div class="cards-container">
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Requests</h3>
+                <p><b>@Model.TotalRequests</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Requests with offer</h3>
+                <p><b>@Model.TotalRequestsWithOffers BGN</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Average price by request</h3>
+                <p><b>@Model.AveragePrice.ToString("F2") BGN</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Average volume</h3>
+                <p><b>@Model.AverageVolume M3</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Average weight</h3>
+                <p><b>@Model.AverageWeight kG</b></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="first-row">
+        <div class="chart-container">
+            <h4>Requests status ratio</h4>
+            <canvas id="requestStatusChart" class="chart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h4>Response time for requests</h4>
+            <canvas id="responseTimeChart" class="chart"></canvas>
+        </div>
+
+    </div>
+    <div class="first-row">
+        <div class="chart-container">
+            <h4>Requests this month</h4>
+            <canvas id="heatMapChart" class="chart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h4>Top 10 clients with most requests</h4>
+            <canvas id="topClientsChart" class="chart"></canvas>
+        </div>
+    </div>
+
+</div>
+    
+
+@section Scripts {
+    <script src="~/js/requestStatistics.js"></script>
+}

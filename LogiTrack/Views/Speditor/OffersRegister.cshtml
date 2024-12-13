@@ -1,0 +1,215 @@
+﻿@model LogiTrack.Core.ViewModels.Offer.FilterOffersViewModel
+@{
+    ViewData["Title"] = "Offers Register";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="search-header">
+        <div class="search-icon">
+            <i class="bi bi-search" style="font-size: 35px; color:#00aa87;"></i>
+        </div>
+        <h2 class="quick-search-title">Quick offers search</h2>
+    </div>
+    <p class="search-description">Please enter your search criteria</p>
+
+    <form asp-action="OffersRegister" asp-controller="Speditor" method="get" class="search-form">
+        <div class="row">
+            <div class="form-group">
+                <label asp-for="PickupAddress"><b>Origin</b></label>
+                <input type="text" id="PickupAddress" asp-for="PickupAddress" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="DeliveryAddress"><b>Destination</b></label>
+                <input type="text" id="DeliveryAddress" asp-for="DeliveryAddress" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate"><b>Start</b></label>
+                <input type="text" id="StartDate" asp-for="StartDate" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate"><b>End</b></label>
+                <input type="text" id="EndDate" asp-for="EndDate" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="MinPrice"><b>Min price</b></label>
+                <input type="text" id="EndDate" asp-for="MinPrice" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxPrice"><b>Max price</b></label>
+                <input type="text" id="EndDate" asp-for="MaxPrice" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="MinWeight"><b>Min weight</b></label>
+                <input type="text" id="EndDate" asp-for="MinWeight" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxWeight"><b>Max weight</b></label>
+                <input type="text" id="EndDate" asp-for="MaxWeight" class="flatpickr" placeholder="Please enter">
+            </div>
+            <div class="form-group">
+                <label asp-for="IsApproved"><b>Approved</b></label>
+                <input asp-for="IsApproved" type="checkbox" id="IsNewCheckbox">
+
+            </div>
+        </div>
+        <div class="button-group">
+            <button type="submit" class="btn"><b>GO</b></button>
+            <a asp-action="OffersRegister" asp-controller="Speditor" type="reset" class=" btn-clear"><b>CLEAR</b></a>
+        </div>
+    </form>
+</div>
+
+<div class="filtered-deliveries-container">
+    <form asp-action="OffersRegister" asp-controller="Speditor" method="get" class="quick-search-form">
+        <div class="form-group">
+            <input type="text" id="keyword" asp-for="SearchTerm" placeholder="Enter keyword">
+            <button type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+            </button>
+        </div>
+    </form>
+    <div class="offer-header">
+        <span>Offer No</span>
+        <span>Offer date</span>
+        <span>Expected Date</span>
+        <span>Price</span>
+        <span>Status</span>
+    </div>
+    @if (Model.Offers.Any())
+    {
+        <div class="delivery-list">
+            @foreach (var offer in Model.Offers)
+            {
+                <a asp-action="OfferDetails" asp-controller="Speditor" asp-route-id="@offer.Id" style="text-decoration: none; color: inherit;">
+                    <div class="item-card">
+                        <div class="item-info">
+                            <span>@offer.OfferNumber</span>
+                            <span>@offer.OfferDate</span>
+                            <span>@offer.ExpectedDeliveryDate</span>
+                            <span>@offer.FinalPrice BGN</span>
+                            <span>@offer.Status</span>
+                        </div>
+                        <div class="item-metrics">
+                            <p style="margin-left:5px;"><b>Origin: </b>@offer.PickupAddress</p>
+                            <p><b>Destination: </b>@offer.DeliveryAddress</p>
+                            <p><b>Packs:</b> @offer.TotalCargos</p>
+                            <p><b>Weight:</b> @offer.TotalWeight kg</p>
+                            <p><b>Volume:</b> @offer.TotalVolume m3</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center">No offers found matching the search criteria.</p>
+    }
+</div>
+
+
+@section Scripts {
+    <script src="~/js/flatpicker.js"></script>
+    <script src="~/js/cardHover.js"></script>
+}
+<style>
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        flex: 1 1 33%;
+        margin-bottom: 10px;
+    }
+
+        .form-group:last-child {
+            margin-right: 0;
+        }
+
+
+    input[type="text"],
+    input[type="date"] {
+        width: 70%;
+        border: none;
+        border-bottom: 1px solid grey;
+        padding: 8px 0;
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        display: flex;
+        margin-top: 105px;
+        flex-direction: row;
+        margin-bottom: 30px;
+        gap: 7px;
+    }
+
+
+
+
+    .offer-header {
+        display: flex;
+        justify-content: space-between;
+        background-color: #ffffff;
+        padding: 30px;
+        font-weight: bold;
+        font-size: 0.90rem;
+        width: 90%;
+    }
+
+    .item-card {
+        background-color: white;
+        font-size: 0.80rem;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .item-card:nth-child(even) {
+            background-color: #F5F5F7;
+        }
+
+    .item-info {
+        display: flex;
+        width: 90%;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        margin-top: 28px;
+        margin-left: 30px;
+        height: 5px;
+    }
+
+    .item-metrics {
+        display: none;
+        margin-top: 10px;
+        justify-content: space-between;
+        width: 90%;
+        transition: background-color 0.3s ease;
+    }
+
+        .item-metrics p {
+            margin-right: 30px;
+        }
+
+    .item-card:hover .item-metrics {
+        display: flex;
+        background-color: #54C392;
+        opacity: 1;
+    }
+
+    .item-card:hover {
+        background-color: #73EC8B;
+        opacity: 90%;
+    }
+</style>
+

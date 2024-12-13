@@ -1,0 +1,84 @@
+﻿@model LogiTrack.Core.ViewModels.Vehicle.VehicleStatisticsViewmodel
+@{
+    ViewData["Title"] = "Vehicles Statistics";
+    Layout = "~/Views/Shared/_SpeditorLayout.cshtml";
+}
+
+
+<div class="chart-container">
+    <div class="cards-container">
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Total vehicles</h3>
+                <p><b>@Model.TotalVehiclesCount</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Refrigerated vehicles</h3>
+                <p><b>@Model.RefrigeratedVehiclesCount</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>For repairment</h3>
+                <p><b>@Model.VehiclesForRepairment</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Total distance</h3>
+                <p><b>@Model.TotalDistanceTravelled KM</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Average distance per vehicle</h3>
+                <p><b>@Model.AverageDistancePerVehicle KM</b></p>
+            </div>
+        </div>
+        <div class="card" id="locationCard">
+            <div class="card-content">
+                <h3>Total fuel consumed</h3>
+                <p><b>@Model.TotalFuelConsumed L</b></p>
+            </div>
+        </div>
+    </div>
+    <div class="first-row">
+        <div class="chart-container">
+            <h4>Vehicles for repairment</h4>
+            <canvas id="vehiclesChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+        <div class="chart-container">
+            <h4>Top 10 vehicles by deliveries</h4>
+            <canvas id="topVehiclesChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+    </div>
+    <div class="first-row">
+        <div class="chart-container">
+            <h4>Top 10 vehicles by aditional cost</h4>
+            <canvas id="topVehiclesByCostChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+        <div class="chart-container">
+            <h4>Top 10 vehicles by aditional cost</h4>
+            <canvas id="topVehiclesByKilometersChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+    </div>
+    <div class="first-row">
+        <div class="chart-container">
+            <h4>Top 5 vehicles by aditional cost</h4>
+            <canvas id="topVehiclesDueForMaintenanceChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+        <div class="chart-container">
+            <h4>Top 5 vehicles by aditional cost</h4>
+            <canvas id="topVehiclesClosestToKilometersChart" class="chart" style="margin-left:50px;"></canvas>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/vehicleStatistics.js"></script>
+}
+
+
