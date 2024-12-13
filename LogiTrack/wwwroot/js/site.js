@@ -1,45 +1,15 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// for details on configuring this project to bundle and minify static web assets.
 
-document.addEventListener('DOMContentLoaded', () => {
-    const dropdownToggles = document.querySelectorAll('.sidebar li > a');
-
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', (event) => {
-            const dropdownMenu = toggle.nextElementSibling;
-            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
-                event.preventDefault();
-                dropdownMenu.classList.toggle('show');
-            }
-        });
-    });
-
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.add('closed');
-})
-
-function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const header = document.querySelector('.header');
-    sidebar.classList.toggle('closed');
-    mainContent.classList.toggle('shifted');
-    header.classList.toggle('shifted');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.add('closed');
-});
-
+// Write your JavaScript code.
 function toggleDropdown() {
     const dropdown = document.getElementById('profileDropdown');
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
 
-// Close the user menu if the user clicks outside of it
 window.onclick = function (event) {
-    if (!event.target.matches('.profile-button')) {
-        const dropdowns = document.getElementsByClassName('profile-dropdown-menu');
+    if (!event.target.matches('.profile-dropdown button')) {
+        const dropdowns = document.getElementsByClassName("profile-dropdown-menu");
         for (let i = 0; i < dropdowns.length; i++) {
             const openDropdown = dropdowns[i];
             if (openDropdown.style.display === 'block') {
@@ -47,28 +17,26 @@ window.onclick = function (event) {
             }
         }
     }
-}
+};
 
-function showCurrentTime() {
-    const now = new Date();
-    const options = { timeZone: 'Europe/Sofia', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-    const timeString = now.toLocaleTimeString('en-US', options);
-    document.getElementById('currentTime').textContent = `Current Time: ${timeString}`;
-}
+document.querySelectorAll('.sidebar ul li').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+        const dropdownMenu = item.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.style.display = 'block';
+        }
+    });
 
-function showError(error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            document.getElementById('location').textContent = "User denied the request for Geolocation.";
-            break;
-        case error.POSITION_UNAVAILABLE:
-            document.getElementById('location').textContent = "Location information is unavailable.";
-            break;
-        case error.TIMEOUT:
-            document.getElementById('location').textContent = "The request to get user location timed out.";
-            break;
-        case error.UNKNOWN_ERROR:
-            document.getElementById('location').textContent = "An unknown error occurred.";
-            break;
-    }
-}
+    item.addEventListener('mouseleave', () => {
+        const dropdownMenu = item.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.style.display = 'none';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    flatpickr(".flatpickr", {
+        dateFormat: "Y-m-d",
+    });
+});

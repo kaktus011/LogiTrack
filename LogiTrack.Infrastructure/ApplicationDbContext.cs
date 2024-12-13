@@ -15,30 +15,27 @@ namespace LogiTrack.Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            Console.WriteLine($"Database Provider: {this.Database.ProviderName}");
-            if (this.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
-            {
-                builder.ApplyConfiguration(new IdentityUserConfiguration());
-                builder.ApplyConfiguration(new IdentityRolesConfiguration());
-                builder.ApplyConfiguration(new IdentityUserRolesConfiguration());
-                builder.ApplyConfiguration(new AddressConfiguration());
-                builder.ApplyConfiguration(new CashRegisterConfiguration());
-                builder.ApplyConfiguration(new ClientCompanyConfiguration());
-                builder.ApplyConfiguration(new InvoiceConnfiguration());
-                builder.ApplyConfiguration(new OfferConfiguration());
-                builder.ApplyConfiguration(new RequestConfiguration());
-                builder.ApplyConfiguration(new StandartCargoConfiguration());
-                builder.ApplyConfiguration(new NonStandardCargoConfiguration());
-                builder.ApplyConfiguration(new DriverConfiguration());
-                builder.ApplyConfiguration(new DeliveryConfiguration());
-                builder.ApplyConfiguration(new VehicleConfiguration());
-                builder.ApplyConfiguration(new DeliveryTrackingConfiguration());
-                builder.ApplyConfiguration(new PricesPerSizeConfiguration());
-                builder.ApplyConfiguration(new FuelPriceConfiguration());
-                builder.ApplyConfiguration(new CalendarEventConfiguration());
-                builder.ApplyConfiguration(new RatingConfiguration());
-                builder.ApplyConfiguration(new ReservedForDeliveryConfiguration());
-            }
+            builder.ApplyConfiguration(new IdentityUserConfiguration());
+            builder.ApplyConfiguration(new IdentityRolesConfiguration());
+            builder.ApplyConfiguration(new IdentityUserRolesConfiguration());
+            builder.ApplyConfiguration(new AddressConfiguration());
+            builder.ApplyConfiguration(new CashRegisterConfiguration());
+            builder.ApplyConfiguration(new ClientCompanyConfiguration());
+            builder.ApplyConfiguration(new InvoiceConnfiguration());
+            builder.ApplyConfiguration(new OfferConfiguration());
+            builder.ApplyConfiguration(new StandartCargoConfiguration());
+            builder.ApplyConfiguration(new RequestConfiguration());
+            builder.ApplyConfiguration(new NonStandardCargoConfiguration());
+            builder.ApplyConfiguration(new DriverConfiguration());
+            builder.ApplyConfiguration(new DeliveryConfiguration());
+            builder.ApplyConfiguration(new VehicleConfiguration());
+            builder.ApplyConfiguration(new DeliveryTrackingConfiguration());
+            builder.ApplyConfiguration(new PricesPerSizeConfiguration());
+            builder.ApplyConfiguration(new FuelPriceConfiguration());
+            builder.ApplyConfiguration(new CalendarEventConfiguration());
+            builder.ApplyConfiguration(new RatingConfiguration());
+            builder.ApplyConfiguration(new ReservedForDeliveryConfiguration());
+
             base.OnModelCreating(builder);
         }
 
@@ -59,5 +56,6 @@ namespace LogiTrack.Infrastructure
         public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<Rating> Ratings { get; set; } = null!;
         public DbSet<ReservedForDelivery> ReservedForDeliveries { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
     }
 }
