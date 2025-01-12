@@ -16,6 +16,8 @@ namespace LogiTrack.Tests
         private IRepository repository;
         private IRequestService requestService;
         private ApplicationDbContext dbContext;
+        private GeocodingService geocodingService;
+        private HttpClient httpClient;
 
         [SetUp]
         public void Setup()
@@ -26,7 +28,9 @@ namespace LogiTrack.Tests
 
             dbContext = new ApplicationDbContext(options);
             repository = new Repository(dbContext);
-            requestService = new RequestService(repository);
+            httpClient = new HttpClient();
+            geocodingService = new GeocodingService(httpClient);
+            requestService = new RequestService(repository, geocodingService);
             SeedData();
         }
 
@@ -197,8 +201,6 @@ namespace LogiTrack.Tests
                 OfferStatus = "Pending",
                 OfferDate = DateTime.Now.AddDays(-15),
                 OfferNumber = "OFFER0001",
-                Notes = "Initial offer for Request 1",
-                StartDate = DateTime.Now.AddDays(-10),
             };
             var offer2 = new LogisticsSystem.Infrastructure.Data.DataModels.Offer
             {
@@ -207,8 +209,6 @@ namespace LogiTrack.Tests
                 OfferStatus = "Approved",
                 OfferNumber = "OFFER0002",
                 OfferDate = DateTime.Now.AddDays(-16),
-                StartDate = DateTime.Now.AddDays(-11),
-                Notes = "Offer accepted for Request 2",
             };
             dbContext.Offers.Add(offer1);
             dbContext.Offers.Add(offer2);
@@ -248,7 +248,6 @@ namespace LogiTrack.Tests
             {
                 PaidOnTime = true,
                 PaidDate = DateTime.Now.AddDays(-5),
-                DeliveryId = delivery1.Id,
                 InvoiceNumber = "INV001",
                 InvoiceDate = DateTime.Now.AddDays(-10),
                 Description = "Invoice for Delivery 1",

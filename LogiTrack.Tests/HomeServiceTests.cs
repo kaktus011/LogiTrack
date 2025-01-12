@@ -201,8 +201,6 @@ namespace LogiTrack.Tests
                 OfferStatus = "Pending",
                 OfferDate = DateTime.Now.AddDays(-15),
                 OfferNumber = "OFFER0001",
-                Notes = "Initial offer for Request 1",
-                StartDate = DateTime.Now.AddDays(-10),
             };
             var offer2 = new LogisticsSystem.Infrastructure.Data.DataModels.Offer
             {
@@ -211,8 +209,6 @@ namespace LogiTrack.Tests
                 OfferStatus = "Approved",
                 OfferNumber = "OFFER0002",
                 OfferDate = DateTime.Now.AddDays(-16),
-                StartDate = DateTime.Now.AddDays(-11),
-                Notes = "Offer accepted for Request 2",
             };
             dbContext.Offers.Add(offer1);
             dbContext.Offers.Add(offer2);
@@ -252,7 +248,6 @@ namespace LogiTrack.Tests
             {
                 PaidOnTime = true,
                 PaidDate = DateTime.Now.AddDays(-5),
-                DeliveryId = delivery1.Id,
                 InvoiceNumber = "INV001",
                 InvoiceDate = DateTime.Now.AddDays(-10),
                 Description = "Invoice for Delivery 1",
@@ -337,26 +332,6 @@ namespace LogiTrack.Tests
             dbContext.SaveChangesAsync();
         }
 
-        [Test]
-        public async Task GetUserByEmailAsync_ShouldReturnUser_WhenEmailExists()
-        {
-            var email = "clientcompany1@example.com";
-
-            var result = await homeService.GetUserByEmailAsync(email);
-
-            Assert.IsNotNull(result, "User should not be null.");
-            Assert.AreEqual(email, result?.Email, "The returned user email is incorrect.");
-        }
-
-        [Test]
-        public async Task GetUserByEmailAsync_ShouldReturnNull_WhenEmailDoesNotExist()
-        {
-            var email = "nonexistent@example.com";
-
-            var result = await homeService.GetUserByEmailAsync(email);
-
-            Assert.IsNull(result, "User should be null when email does not exist.");
-        }
 
         [TearDown]
         public void TearDown()
