@@ -120,7 +120,6 @@ namespace LogiTrack.Core.Services
 
         public async Task<DriverDashboardViewModel?> GetDriverDashboardAsync(string username)
         {
-            var driver = await repository.AllReadonly<Infrastructure.Data.DataModels.Driver>().Where(x => x.User.UserName == username).FirstOrDefaultAsync();
             var deliveryQuery = repository.AllReadonly<Delivery>().Include(x => x.Offer).ThenInclude(x => x.Request).Where(x => x.Driver.User.UserName == username);
             var model = new DriverDashboardViewModel()
             {
@@ -195,6 +194,7 @@ namespace LogiTrack.Core.Services
             var model = new SpeditorDashboardViewModel
             {
                 TotalRequests = await requestsQuery.CountAsync(),
+                PendingRequestsCount = await requestsQuery.CountAsync(x => x.Status == StatusConstants.Pending),
                 TotalOffers = await offersQuery.CountAsync(),
                 NewRequests = await requestsQuery.CountAsync(x => x.CreatedAt.Date <= DateTime.Now.Date.AddDays(-30)),
                 AcceptedOffers = await offersQuery.CountAsync(x => x.OfferStatus == StatusConstants.Approved),

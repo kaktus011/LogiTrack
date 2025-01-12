@@ -150,7 +150,8 @@ namespace LogiTrack.Core.Services
 					Title = $"Successful delivery: {delivery.ReferenceNumber}",
 					Message = $"Delivery {delivery.ReferenceNumber} has been delivered. Check it out now!",
 					UserId = logisticsUser.Id,
-					IsRead = false
+                    Date = DateTime.Now,
+                    IsRead = false
 				};
 				await repository.AddAsync(logisticsNotification);
 
@@ -172,7 +173,9 @@ namespace LogiTrack.Core.Services
 					Title = $"Successful delivery: {delivery.ReferenceNumber}",
 					Message = $"Delivery {delivery.ReferenceNumber} has been delivered. Check it out now!",
 					UserId = speditorUser.Id,
-					IsRead = false
+                    Date = DateTime.Now,
+
+                    IsRead = false
 				};
 				await repository.AddAsync(speditorNotification);
 
@@ -333,9 +336,9 @@ namespace LogiTrack.Core.Services
                 Name = x.Name,
                 LicenseNumber = x.LicenseNumber,
                 Phone = x.User.PhoneNumber,
-                LicenseExpiryDate = x.LicenseExpiryDate.ToString(),               
+                LicenseExpiryDate = x.LicenseExpiryDate.ToString("dd-MM-yyyy"),               
                 Username = x.User.UserName,
-                Salary = x.Salary.ToString(),
+                Salary = x.Salary.ToString("F2"),
                 Age = x.Age.ToString(),
                 YearOfExperience = x.YearOfExperience.ToString(),
                 MonthsOfExperience = x.MonthsOfExperience.ToString(),
@@ -396,7 +399,7 @@ namespace LogiTrack.Core.Services
                     DaysTillExpiry = (x.LicenseExpiryDate - DateTime.Now).Days.ToString(),
                     Phone = x.User.PhoneNumber,
                     LicenseNumber = x.LicenseNumber,
-                    LicenseExpiryDate = x.LicenseExpiryDate.ToString(),                 
+                    LicenseExpiryDate = x.LicenseExpiryDate.ToString("dd-MM-yyyy"),                 
                     Username = x.User.UserName,
                     Salary = x.Salary.ToString(),
                     Age = x.Age.ToString(),
