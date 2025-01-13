@@ -125,7 +125,7 @@
                 </div>
                 @if (Model.Status == "Approved")
                 {
-                    <a asp-action="RequestDetails" asp-controller="Speditor" asp-route-id="@Model.RequestId" style="color:#00aa87;" class="btn btn-clear">See request</a>
+                    <a asp-action="RequestDetails" asp-controller="Speditor" asp-route-id="@Model.RequestId"  class="btn btn-clear">See request</a>
                 }
             </div>
             <div class="request-details-column">
@@ -150,7 +150,7 @@
                 </div>
                 @if (Model.OfferStatus == "Approved")
                 {
-                    <a asp-action="DeliveryDetails" asp-controller="Speditor" asp-route-id="@Model.DeliveryId" style="color:#00aa87;" class="btn btn-clear">See delivery</a>
+                    <a asp-action="DeliveryDetails" asp-controller="Speditor" asp-route-id="@Model.DeliveryId"  class="btn btn-clear">See delivery</a>
                 }
             </div>
         </div>

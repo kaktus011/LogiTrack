@@ -88,7 +88,6 @@ namespace LogiTrack.Core.Services
                 PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
                 ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
                 FinalPrice = x.Offer.FinalPrice.ToString(),
-                IsPaid = x.Invoice.IsPaid,
                 IsDelivered = x.DeliveryStep == 4 ? true : false,
                 TotalWeight = x.Offer.Request.TotalWeight.ToString(),
                 TotalVolume = x.Offer.Request.TotalVolume.ToString(),

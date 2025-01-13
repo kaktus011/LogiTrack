@@ -18,7 +18,7 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .HasForeignKey(x => x.DriverId)
                 .OnDelete(DeleteBehavior.Restrict);
             var data = new SeedData();
-            builder.HasData(new DeliveryTracking[] { data.DeliveryTracking1, data.DeliveryTracking2, data.DeliveryTracking3, data.DeliveryTracking4 , data.DeliveryTracking5});
+            builder.HasData(new DeliveryTracking[] { data.DeliveryTracking1, data.DeliveryTracking6, data.DeliveryTracking7, data.DeliveryTracking2, data.DeliveryTracking3, data.DeliveryTracking4 , data.DeliveryTracking5});
         }
     }
 }

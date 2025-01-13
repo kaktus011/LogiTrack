@@ -25,7 +25,7 @@ namespace LogiTrack.Core.Services
 
         public async Task MakeRequestAsync(MakeRequestViewModel model, string username)
         {
-            var client = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>().FirstOrDefaultAsync(x => x.User.UserName == username);
+            var client = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>().Include(x => x.User).FirstOrDefaultAsync(x => x.User.UserName == username);
 
             var pickupAddress = new Infrastructure.Data.DataModels.Address
             {
@@ -91,7 +91,7 @@ namespace LogiTrack.Core.Services
             request.RerefenceNumber = $"REQ-{request.Id}";
 
             var sharedTruck = request.SharedTruck == true ? "SharedTruck" : "NotSharedTruck";
-            var quotient = $"{request.Type}For{sharedTruck}";
+            var quotient = $"QuotientFor{request.Type}{sharedTruck}";
 
             var parameter = Expression.Parameter(typeof(PricesPerSize), "x");
             var property = Expression.Property(parameter, quotient);
@@ -99,7 +99,7 @@ namespace LogiTrack.Core.Services
 
             var averageQuotient = await repository.AllReadonly<PricesPerSize>().Select(lambda).AverageAsync();
             var averageConstantExpenses = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.Vehicle>().AverageAsync(x => x.ContantsExpenses);
-            var fuelPrice = await repository.AllReadonly<Infrastructure.Data.DataModels.FuelPrice>().Where(x => x.Date == DateTime.Now || x.Date == DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
+            var fuelPrice = await repository.AllReadonly<Infrastructure.Data.DataModels.FuelPrice>().OrderByDescending(x => x.Date).FirstOrDefaultAsync();
             var averageVehicleConsumption = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.Vehicle>().AverageAsync(x => x.FuelConsumptionPer100Km);
             var fuelConsumption = (request.Kilometers / 100) * averageVehicleConsumption;
             var fuelCost = (decimal)fuelConsumption * fuelPrice.Price;
@@ -203,7 +203,7 @@ namespace LogiTrack.Core.Services
                 ExpectedDeliveryDate = x.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
                 CreationDate = x.CreatedAt.ToString("dd-MM-yyyy"),
                 Approved = x.Status == StatusConstants.Approved,
-                NumberOfItems = (x.StandartCargo?.NumberOfPallets ?? 0) + (x.NumberOfNonStandartGoods ?? 0).ToString(),
+                NumberOfItems = ((x.StandartCargo?.NumberOfPallets ?? 0) + (x.NumberOfNonStandartGoods ?? 0)).ToString(),
                 TotalWeight = x.TotalWeight.ToString("F2"),
                 TotalVolume = x.TotalVolume.ToString("F2"),
             });
@@ -266,7 +266,7 @@ namespace LogiTrack.Core.Services
         public async Task<IEnumerable<RequestsForSearchViewModel>> GetRequestsForCompanyBySearchTermAsync(string companyUsername, string? searchTerm)
         {
             var requests = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.Request>()
-                .Include(x => x.PickupAddress).Include(x => x.DeliveryAddress).Where(x => x.ClientCompany.User.UserName == companyUsername).ToListAsync();
+                .Include(x => x.PickupAddress).Include(x => x.DeliveryAddress).Include(x => x.StandartCargo).Where(x => x.ClientCompany.User.UserName == companyUsername).ToListAsync();
 
             if (string.IsNullOrEmpty(searchTerm) == false)
             {
@@ -297,7 +297,7 @@ namespace LogiTrack.Core.Services
                     ExpectedDeliveryDate = x.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
                     CreationDate = x.CreatedAt.ToString("dd-MM-yyyy"),
                     Approved = x.Status == StatusConstants.Approved,
-                    NumberOfItems = (x.StandartCargo?.NumberOfPallets ?? 0) + (x.NumberOfNonStandartGoods ?? 0).ToString(),
+                    NumberOfItems = ((x.StandartCargo?.NumberOfPallets ?? 0) + (x.NumberOfNonStandartGoods ?? 0)).ToString(),
                     TotalWeight = x.TotalWeight.ToString("F2"),
                     TotalVolume = x.TotalVolume.ToString("F2"),
                 });

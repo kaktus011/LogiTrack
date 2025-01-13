@@ -9,7 +9,7 @@ using LogiTrack.Core.Constants;
 
 namespace LogiTrack.Controllers
 {
-    [Authorize(Roles = UserRolesConstants.Accountant)]
+    [Authorize]
     public class AccountantController : Controller
     {
         private readonly IVehicleService vehicleService;
@@ -206,6 +206,7 @@ namespace LogiTrack.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{UserRolesConstants.Accountant},{UserRolesConstants.Logistics}")]
         public async Task<JsonResult> GetInvoicesByStatus()
         {
             var data = await deliveryStatisticsService.GetInvoicesByStatusAsync();
@@ -213,6 +214,8 @@ namespace LogiTrack.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = $"{UserRolesConstants.Accountant},{UserRolesConstants.Logistics}")]
+
         public async Task<JsonResult> GetTop10ClientsByOverdueAmount()
         {
             var data = await deliveryStatisticsService.GetTop10ClientsByOverdueAmountAsync();
@@ -220,6 +223,7 @@ namespace LogiTrack.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = $"{UserRolesConstants.Accountant},{UserRolesConstants.Logistics}")]
         public async Task<JsonResult> GetLatePaymentsByClient()
         {
             var data = await deliveryStatisticsService.GetLatePaymentsByClientAsync();

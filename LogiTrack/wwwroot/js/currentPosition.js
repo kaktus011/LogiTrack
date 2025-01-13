@@ -23,6 +23,7 @@ async function fetchLocation(lat, long) {
 
         if (data.results && data.results.length > 0) {
             const address = data.results[0].formatted_address;
+            console.log(address);
             document.getElementById('location').textContent = address;
         } else {
             document.getElementById('location').textContent = "Unable to retrieve location.";

@@ -604,6 +604,10 @@ namespace LogiTrack.Controllers
         public async Task<JsonResult> GetCarbonEmission(int id)
         {
             var username = User.GetUsername();
+            if(username != "clientcompany1")
+            {
+                username = "clientcompany1";
+            }
 
             var model = await deliveryStatisticsService.GetCarbonEmissionsForCompanyAsync(username, id);
             return Json(new { specificDeliveryEmission = model.Item1, totalEmissions = model.Item2 });

@@ -524,6 +524,8 @@ namespace LogiTrack.Core.Services
                 RegistrationNumber = delivery.Vehicle.RegistrationNumber,
                 VehicleType = delivery.Vehicle.VehicleType,
                 DeliveryStep = delivery.DeliveryStep,
+                Comment = await repository.AllReadonly<Rating>().Where(x => x.DeliveryId == delivery.Id).Select(x => x.Comment).FirstOrDefaultAsync(),
+                RatingStars = await repository.AllReadonly<Rating>().Where(x => x.DeliveryId == delivery.Id).Select(x => x.RatingStars).FirstOrDefaultAsync()
             };
 
             model.DeliveryTrackings = await GetDeliveryTrackingsForDelivery(id);
@@ -551,7 +553,7 @@ namespace LogiTrack.Core.Services
 
         public async Task LeaveRatingForDeliveryAsync(int id, string? comment, int ratingStars)
         {
-            var delivery = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>().Where(x => x.Id == id).FirstOrDefaultAsync();
+            var delivery = await repository.AllReadonly<Infrastructure.Data.DataModels.Delivery>().Include(x => x.Offer).ThenInclude(x => x.Request).ThenInclude(x => x.ClientCompany).Where(x => x.Id == id).FirstOrDefaultAsync();
             var rating = new Rating
             {
                 DeliveryId = delivery.Id,
@@ -606,7 +608,8 @@ namespace LogiTrack.Core.Services
             }
             if (isPaid != null)
             {
-                deliveries = deliveries.Where(x => x.Invoice.IsPaid == true).ToList();
+                var invoices = await repository.AllReadonly<Invoice>().Include(x => x.Delivery).Where(x => x.IsPaid == isPaid).Select(x => x.Delivery).ToListAsync();
+                deliveries = invoices;
             }
             if (string.IsNullOrEmpty(referenceNumber) == false)
             {
@@ -952,7 +955,6 @@ namespace LogiTrack.Core.Services
                 PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
                 ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
                 FinalPrice = x.Offer.FinalPrice.ToString(),
-                IsPaid = x.Invoice.IsPaid,
                 IsDelivered = x.DeliveryStep == 4 ? true : false,
                 TotalWeight = x.Offer.Request.TotalWeight.ToString(),
                 TotalVolume = x.Offer.Request.TotalVolume.ToString(),

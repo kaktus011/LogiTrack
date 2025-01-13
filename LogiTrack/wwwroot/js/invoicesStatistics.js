@@ -123,7 +123,7 @@ async function fetchLatePaymentsByClient() {
     }
 }
 
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
     fetchInvoiceStatusData();
     fetchTop10OverdueClients();
     fetchLatePaymentsByClient();

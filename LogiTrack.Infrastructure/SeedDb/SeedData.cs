@@ -7,7 +7,6 @@ namespace LogiTrack.Infrastructure.SeedDb
     public class SeedData
     {
         public IdentityUser ClientCompany1User { get; set; } = null!;
-        public IdentityUser ClientCompany2User { get; set; } = null!;
         public IdentityUser LogiticsCompanyUser { get; set; } = null!;
         public IdentityUser SecretaryUser { get; set; } = null!;
         public IdentityUser SpeditorUser { get; set; } = null!;
@@ -40,7 +39,6 @@ namespace LogiTrack.Infrastructure.SeedDb
         public Address Address11 { get; set; } = null!;
         public Address Address12 { get; set; } = null!;
         public ClientCompany ClientCompany1 { get; set; } = null!;
-        public ClientCompany ClientCompany2 { get; set; } = null!;
         public StandartCargo StandartCargo1 { get; set; } = null!;
         public StandartCargo StandartCargo2 { get; set; } = null!;
         public StandartCargo StandartCargo3 { get; set; } = null!;
@@ -92,6 +90,9 @@ namespace LogiTrack.Infrastructure.SeedDb
         public DeliveryTracking DeliveryTracking3 { get; set; } = null!;
         public DeliveryTracking DeliveryTracking4 { get; set; } = null!;
         public DeliveryTracking DeliveryTracking5 { get; set; } = null!;
+        public DeliveryTracking DeliveryTracking6 { get; set; } = null!;
+        public DeliveryTracking DeliveryTracking7 { get; set; } = null!;
+        public DeliveryTracking DeliveryTracking8 { get; set; } = null!;
 
         public CalendarEvent CalendarEvent1 { get; set; } = null!;
         public CalendarEvent CalendarEvent2 { get; set; } = null!;
@@ -133,14 +134,6 @@ namespace LogiTrack.Infrastructure.SeedDb
             };
             ClientCompany1User.PasswordHash = hasher.HashPassword(ClientCompany1User, "clientcompany1");
 
-            ClientCompany2User = new IdentityUser
-            {
-                UserName = "clientcompany2",
-                Email = "yyotova@tu-sofia.bg",
-                Id = "f1b1b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b",
-                PhoneNumber = "0987654321",
-            };
-
             LogiticsCompanyUser = new IdentityUser
             {
                 UserName = "logistics",
@@ -152,12 +145,12 @@ namespace LogiTrack.Infrastructure.SeedDb
 
             SecretaryUser = new IdentityUser
             {
-                UserName = "secretary",
+                UserName = "accountant",
                 Email = "secretary@example.com",
                 Id = "38ba6810-2800-4ac8-b005-5c27e8248951", 
                 EmailConfirmed = true
             };
-            SecretaryUser.PasswordHash = hasher.HashPassword(SecretaryUser, "secretary");
+            SecretaryUser.PasswordHash = hasher.HashPassword(SecretaryUser, "accountant");
 
             SpeditorUser = new IdentityUser
             {
@@ -291,21 +284,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 RegistrationNumber = "REG123456",
                 Industry = "Manufacturing",
                 AddressId = 1,
-                CreatedAt = DateTime.Now.AddDays(-20),
-            };
-
-            ClientCompany2 = new ClientCompany
-            {
-                Id = 2,
-                Name = "Client Company 2",
-               // UserId = ClientCompany2User.Id,
-                RegistrationStatus = "Pending",
-                ContactPerson = "Jane Smith",
-                AlternativePhoneNumber = "9876543210",
-                RegistrationNumber = "REG654321",
-                Industry = "Fashion",
-                AddressId = 2,
-                CreatedAt = DateTime.Now.AddDays(-10),
+                CreatedAt = DateTime.Now.AddDays(-200),
             };
         }
 		private void SeedStandartCargos()
@@ -365,7 +344,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 ApproximatePrice = 500,
                 CalculatedPrice = 450,
                 ExpectedDeliveryDate = DateTime.Now.AddDays(7),
-                Status = "Pending",
+                Status = "Approved",
                 SpecialInstructions = "Handle with care",
                 IsRefrigerated = false,
                 CreatedAt = DateTime.Now.AddDays(-20),
@@ -389,7 +368,7 @@ namespace LogiTrack.Infrastructure.SeedDb
 				ApproximatePrice = 1200,
 				CalculatedPrice = 1150,
 				ExpectedDeliveryDate = DateTime.Now.AddDays(10),
-				Status = "Accepted",
+				Status = "Approved",
 				SpecialInstructions = "Keep dry",
 				IsRefrigerated = false,
 				CreatedAt = DateTime.Now.AddDays(-21),
@@ -413,7 +392,7 @@ namespace LogiTrack.Infrastructure.SeedDb
 				ApproximatePrice = 2000,
 				CalculatedPrice = 1900,
 				ExpectedDeliveryDate = DateTime.Now.AddDays(5),
-				Status = "Pending",
+				Status = "Approved",
 				SpecialInstructions = "Requires crane",
 				IsRefrigerated = false,
                 StandartCargoId = default,
@@ -438,7 +417,7 @@ namespace LogiTrack.Infrastructure.SeedDb
 				ApproximatePrice = 350,
 				CalculatedPrice = 340,
 				ExpectedDeliveryDate = DateTime.Now.AddDays(-3),
-				Status = "Pending",
+				Status = "Approved",
 				SpecialInstructions = "Do not compress",
 				IsRefrigerated = false,
 				CreatedAt = DateTime.Now.AddDays(-23),
@@ -461,7 +440,7 @@ namespace LogiTrack.Infrastructure.SeedDb
 				ApproximatePrice = 220,
 				CalculatedPrice = 210,
 				ExpectedDeliveryDate = DateTime.Now.AddDays(-5),
-				Status = "Pending",
+				Status = "Approved",
 				SpecialInstructions = "Fragile binding",
 				IsRefrigerated = false,
 				CreatedAt = DateTime.Now.AddDays(-24),
@@ -528,7 +507,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 Id = 1,
                 RequestId = 1, 
                 FinalPrice = 1200.0m,
-                OfferStatus = "Pending",
+                OfferStatus = "Approved",
                 OfferDate = DateTime.Now.AddDays(-15),
                 OfferNumber = "OFFER0001",
             };
@@ -566,7 +545,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 RequestId = 5,
                 OfferNumber = "OFFER0005",
                 FinalPrice = 2300.0m,
-                OfferStatus = "Accepted",
+                OfferStatus = "Approved",
                 OfferDate = DateTime.Now.AddDays(-13),
             };
         }
@@ -696,12 +675,12 @@ namespace LogiTrack.Infrastructure.SeedDb
                 VehicleId = 1,
                 DriverId = 1,
                 OfferId = 1,
-                Status = "In Transit",
+                Status = "Delivered",
                 TotalExpenses = 500.00m,
                 Profit = 750.00m,
                 ReferenceNumber = "DEL0001",
                 DeliveryStep = 2,
-                ActualDeliveryDate = DateTime.Now.AddDays(-1)
+                ActualDeliveryDate = DateTime.Now.AddDays(7)
             };
             Delivery2 = new Delivery
             {
@@ -771,7 +750,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 Description = "Fuel Expense",
                 Type = "Vehicle Expenses",
                 Amount = 100.00m,
-                DateSubmitted = DateTime.Now.AddDays(-5),
+                DateSubmitted = DateTime.Now.AddDays(8),
                 FileId = "1hcVFpCA0Mh1txKh0KbCbDR5N_QAoTFLq"
             };
             CashRegister2 = new CashRegister
@@ -781,7 +760,7 @@ namespace LogiTrack.Infrastructure.SeedDb
                 Description = "Toll Fee",
                 Type = "Vehicle Expenses",
                 Amount = 50.00m,
-                DateSubmitted = DateTime.Now.AddDays(-4),
+                DateSubmitted = DateTime.Now.AddDays(8),
                 FileId = "1hcVFpCA0Mh1txKh0KbCbDR5N_QAoTFLq"
             };
             CashRegister3 = new CashRegister
@@ -871,10 +850,34 @@ namespace LogiTrack.Infrastructure.SeedDb
                 DriverId = 1,
                 StatusUpdate = "Delivered",
                 Notes = "Delivery completed successfully.",
-                Timestamp = DateTime.Now.AddDays(-5),
+                Timestamp = DateTime.Now.AddDays(7),
                 Latitude = 42.6977, 
                 Longitude = 23.3219,
                 Address = "Sofia, Bulgaria"
+            };
+            DeliveryTracking6 = new DeliveryTracking
+            {
+                Id = 6,
+                DeliveryId = 1,
+                DriverId = 1,
+                StatusUpdate = "In Transit",
+                Notes = "Delivery in transit.",
+                Timestamp = DateTime.Now.AddDays(7),
+                Latitude = 42.6977,
+                Longitude = 23.3219,
+                Address = "Sliven, Bulgaria"
+            };
+            DeliveryTracking7 = new DeliveryTracking
+            {
+                Id = 7,
+                DeliveryId = 1,
+                DriverId = 1,
+                StatusUpdate = "Collected",
+                Notes = "Collected cargo.",
+                Timestamp = DateTime.Now.AddDays(7),
+                Latitude = 42.6977,
+                Longitude = 23.3219,
+                Address = "Sliven, Bulgaria"
             };
             DeliveryTracking2 = new DeliveryTracking
             {

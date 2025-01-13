@@ -110,7 +110,7 @@ namespace LogiTrack.Core.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<ClientsForClientregisterViewModel>> GetClientsForClientsRegisterAsync(bool? active = null, string? name = null, string? email = null, string? registrationNumber = null, string? phoneNumber = null)
+        public async Task<List<ClientsForClientregisterViewModel>> GetClientsForClientsRegisterAsync(bool? active, string? name = null, string? email = null, string? registrationNumber = null, string? phoneNumber = null)
         {
             var query = repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>().Where(x => x.RegistrationStatus == StatusConstants.Approved)
                 .Include(x => x.Address).Include(x => x.User).AsQueryable();
@@ -181,48 +181,95 @@ namespace LogiTrack.Core.Services
 
         public async Task<ClientDetailsViewModel?> GetClientDetailsAsync(int id)
         {
-            var company = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.ClientCompany>()
-                .Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
-            var user = await repository.AllReadonly<IdentityUser>().FirstOrDefaultAsync(x => x.Id == company.UserId);
-            var model = new ClientDetailsViewModel()
+            var company = await repository.AllReadonly<ClientCompany>()
+                .Include(x => x.Address)
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (company == null)
+            {
+                throw new InvalidOperationException($"Client company with ID {id} not found.");
+            }
+
+            var user = await repository.AllReadonly<IdentityUser>()
+                .FirstOrDefaultAsync(x => x.Id == company.UserId);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User associated with the client company not found.");
+            }
+
+            var model = new ClientDetailsViewModel
             {
                 Id = company.Id,
                 Name = company.Name,
                 RegistrationNumber = company.RegistrationNumber,
                 Industry = company.Industry,
-                Street = company.Address.Street,
-                City = company.Address.City,
-                PostalCode = company.Address.PostalCode,
-                Country = company.Address.County,
-                ContactPerson = company.ContactPerson,
-                PhoneNumber = user.PhoneNumber,
-                AlternativePhoneNumber = company.AlternativePhoneNumber,
-                Email = user.Email,
-                Username = user.UserName,
-                TotalDeliveries = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id).CountAsync(),
-                TotalProfit = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id).SumAsync(x => x.Profit),
-                TotalRequests = await repository.AllReadonly<LogisticsSystem.Infrastructure.Data.DataModels.Request>().Where(x => x.ClientCompanyId == company.Id).CountAsync(),
-                TotalSatisfactionDeliveries = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Rating>().Where(x => x.Delivery.Offer.Request.ClientCompanyId == company.Id).CountAsync(),
+                Street = company.Address?.Street ?? "N/A",
+                City = company.Address?.City ?? "N/A",
+                PostalCode = company.Address?.PostalCode ?? "N/A",
+                Country = company.Address?.County ?? "N/A",
+                ContactPerson = company.ContactPerson ?? "N/A",
+                PhoneNumber = user.PhoneNumber ?? "N/A",
+                AlternativePhoneNumber = company.AlternativePhoneNumber ?? "N/A",
+                Email = user.Email ?? "N/A",
+                Username = user.UserName ?? "N/A",
+                TotalDeliveries = await repository.AllReadonly<Delivery>()
+                    .Where(x => x.Offer.Request.ClientCompanyId == company.Id)
+                    .CountAsync(),
+                TotalProfit = await repository.AllReadonly<Delivery>()
+                    .Where(x => x.Offer.Request.ClientCompanyId == company.Id)
+                    .SumAsync(x => (decimal?)x.Profit) ?? 0,
+                TotalRequests = await repository.AllReadonly<Request>()
+                    .Where(x => x.ClientCompanyId == company.Id)
+                    .CountAsync(),
+                TotalSatisfactionDeliveries = await repository.AllReadonly<Rating>()
+                    .Where(x => x.Delivery.Offer.Request.ClientCompanyId == company.Id)
+                    .CountAsync(),
                 CreatedAt = company.CreatedAt.ToString("dd-MM-yyyy"),
-                DeliveriesLastMonth = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id && x.Offer.Request.CreatedAt.Month > DateTime.Now.Month - 1 && x.Offer.Request.CreatedAt.Month < DateTime.Now.Month).CountAsync(),
-                NotOnTimeDeliveries = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id && x.ActualDeliveryDate > x.Offer.Request.ExpectedDeliveryDate).CountAsync(),
-                NotPaidDeliveries = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id && x.Invoice.IsPaid == false).CountAsync(),
+                DeliveriesLastMonth = await repository.AllReadonly<Delivery>()
+                    .Where(x => x.Offer.Request.ClientCompanyId == company.Id &&
+                                x.Offer.Request.CreatedAt.Month == DateTime.Now.AddMonths(-1).Month)
+                    .CountAsync(),
+                NotOnTimeDeliveries = await repository.AllReadonly<Delivery>()
+                    .Where(x => x.Offer.Request.ClientCompanyId == company.Id &&
+                                x.ActualDeliveryDate.HasValue &&
+                                x.ActualDeliveryDate > x.Offer.Request.ExpectedDeliveryDate)
+                    .CountAsync(),
+                NotPaidDeliveries = await repository.AllReadonly<Delivery>()
+                    .Where(x => x.Offer.Request.ClientCompanyId == company.Id &&
+                                x.Invoice != null &&
+                                x.Invoice.IsPaid == false)
+                    .CountAsync(),
             };
-            model.Deliveries = await repository.AllReadonly<LogiTrack.Infrastructure.Data.DataModels.Delivery>().Where(x => x.Offer.Request.ClientCompanyId == company.Id).Select(x => new DeliveryForClientsDeliveriesViewModel
-            {
-                Id = x.Id,
-                ReferenceNumber = x.ReferenceNumber,
-                DeliveryAddress = $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}",
-                PickupAddress = $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}",
-                ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
-                FinalPrice = x.Offer.FinalPrice.ToString(),
-                IsPaid = x.Invoice.IsPaid,
-                IsDelivered = x.DeliveryStep == 4 ? true : false,
-                TotalWeight = x.Offer.Request.TotalWeight.ToString(),
-                TotalVolume = x.Offer.Request.TotalVolume.ToString(),
-                TotalItems = x.Offer.Request.StandartCargo == null ? x.Offer.Request.NumberOfNonStandartGoods.ToString() : x.Offer.Request.StandartCargo.NumberOfPallets.ToString(),
-                ActualDeliveryDate = x.ActualDeliveryDate.GetValueOrDefault().ToString("dd-MM-yyyy")
-            }).ToListAsync();
+
+            model.Deliveries = await repository.AllReadonly<Delivery>()
+                .Include(x => x.Offer)
+                .ThenInclude(x => x.Request)
+                .ThenInclude(x => x.ClientCompany)
+                .Where(x => x.Offer.Request.ClientCompanyId == company.Id)
+                .Select(x => new DeliveryForClientsDeliveriesViewModel
+                {
+                    Id = x.Id,
+                    ReferenceNumber = x.ReferenceNumber,
+                    DeliveryAddress = x.Offer.Request.DeliveryAddress != null
+                        ? $"{x.Offer.Request.DeliveryAddress.Street}, {x.Offer.Request.DeliveryAddress.City}, {x.Offer.Request.DeliveryAddress.County}"
+                        : "N/A",
+                    PickupAddress = x.Offer.Request.PickupAddress != null
+                        ? $"{x.Offer.Request.PickupAddress.Street}, {x.Offer.Request.PickupAddress.City}, {x.Offer.Request.PickupAddress.County}"
+                        : "N/A",
+                    ExpectedDeliveryDate = x.Offer.Request.ExpectedDeliveryDate.ToString("dd-MM-yyyy"),
+                    FinalPrice = x.Offer.FinalPrice.ToString("F2") ?? "0",
+                    IsDelivered = x.DeliveryStep == 4,
+                    TotalWeight = x.Offer.Request.TotalWeight.ToString(),
+                    TotalVolume = x.Offer.Request.TotalVolume.ToString(),
+                    TotalItems = x.Offer.Request.StandartCargo != null
+                        ? x.Offer.Request.StandartCargo.NumberOfPallets.ToString()
+                        : x.Offer.Request.NumberOfNonStandartGoods.ToString() ?? "0",
+                    ActualDeliveryDate = x.ActualDeliveryDate.Value.ToString("dd-MM-yyyy") ?? "N/A",
+                })
+                .ToListAsync();
+
             return model;
         }
 

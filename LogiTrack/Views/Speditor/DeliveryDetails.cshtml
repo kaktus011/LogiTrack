@@ -37,7 +37,7 @@
                     @if (Model.HasRated == true)
                     {
                         <p>
-                            <strong>Your Rating:</strong>
+                            <strong>Rating:</strong>
                             <div class="star-rating">
                                 @for (int i = 1; i <= 5; i++)
                                 {
@@ -46,7 +46,7 @@
                             </div>
                         </p>
                         <p>
-                            <strong>Your comment:</strong>
+                            <strong>Comment:</strong>
                             <span>@Model.Comment</span>
                         </p>
                     }
@@ -71,7 +71,7 @@
                     <p><b>Metrics:</b> @Model.VehicleLength cm X @Model.VehicleWidth cm X @Model.VehicleHeight cm</p>
                     <p><b>Weight capacity:</b> @Model.VehicleWeightCapacity KG</p>
                     <p><b>Fuel consumption:</b> @Model.FuelConsumptionPer100Km L/100KM</p>
-                    <a asp-action="VehicleDetails" asp-controller="Logistics" asp-route-id="@Model.VehicleId" style="color:#00aa87; ">See vehicle</a>
+                    <a asp-action="VehicleDetails" asp-controller="Speditor" asp-route-id="@Model.VehicleId" style="color:#00aa87; ">See vehicle</a>
                 </div>
 
                 <div class="column" style="margin-top: 20px;">
@@ -82,7 +82,7 @@
                         <p><strong>Salary:</strong> @Model.Salary BGN</p>
                         <p><strong>Experience:</strong> @Model.YearOfExperience years, @Model.MonthsOfExperience months</p>
                     </div>
-                    <a asp-action="DriverDetails" asp-controller="Logistics" asp-route-id="@Model.DriverId" style="color:#00aa87;">See driver</a>
+                    <a asp-action="DriverDetails" asp-controller="Speditor" asp-route-id="@Model.DriverId" style="color:#00aa87;">See driver</a>
                 </div>
             </div>
         </div>
@@ -96,11 +96,11 @@
                     <p><strong>Country:</strong> @Model.PickupCountry</p>
                     <p><strong>Latitude:</strong> @Model.PickupLatitude</p>
                     <p><strong>Longitude:</strong> @Model.PickupLongitude</p>
-                    @*<div id="pickupMap"
+                    <div id="pickupMap"
                     class="map"
                     data-latitude="@Model.PickupLatitude"
                     data-longitude="@Model.PickupLongitude"></div>
-                    <p id="pickupAddress">Fetching address...</p>*@
+                    <p id="pickupAddress">Fetching address...</p>
                 </div>
 
                 <div class="column">
@@ -110,11 +110,11 @@
                     <p><strong>Country:</strong> @Model.DeliveryCountry</p>
                     <p><strong>Latitude:</strong> @Model.DeliveryLatitude</p>
                     <p><strong>Longitude:</strong> @Model.DeliveryLongitude</p>
-                    @*<div id="deliveryMap"
+                    <div id="deliveryMap"
                     class="map"
                     data-latitude="@Model.DeliveryLatitude"
                     data-longitude="@Model.DeliveryLongitude"></div>
-                    <p id="deliveryAddress">Fetching address...</p>*@
+                    <p id="deliveryAddress">Fetching address...</p>
                 </div>
             </div>
         </div>
@@ -289,8 +289,8 @@
                     datasets: [{
                         label: 'Amount',
                         data: [profit, loss],
-                        backgroundColor: ['#4CAF50', '#F44336'],
-                        borderColor: ['#388E3C', '#D32F2F'],
+                        backgroundColor: ['#00aa87', '#FF6384'],
+                        borderColor: ['#00aa87', '#FF6384'],
                         borderWidth: 1
                     }]
                 },

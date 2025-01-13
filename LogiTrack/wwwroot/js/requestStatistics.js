@@ -231,9 +231,9 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchTopClients();
 });
 
-window.onload = async function () {
+document.addEventListener('DOMContentLoaded', async function () {
     await fetchRequestStatusDistribution();
     await fetchResponseTimes();
     await renderHeatMap();
-};
+});
 

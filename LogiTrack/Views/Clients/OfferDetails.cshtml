@@ -125,13 +125,13 @@
                 </div>
                 @if (Model.Status == "Approved")
                 {
-                    <a asp-action="RequestDetails" asp-controller="Clients" asp-route-id="@Model.RequestId" style="color:#00aa87;" class="btn btn-clear">See reques</a>
+                    <a asp-action="RequestDetails" asp-controller="Clients" asp-route-id="@Model.RequestId" class="btn btn-clear">See request</a>
                 }
             </div>
             <div class="request-details-column">
                 <div class="header-image-div">
                     <div class="header-image">
-                        <i class="fas fa-hand-holding-usd" style="font-size: 2rem; color: #00aa87; margin-right: 10px;"></i>
+                        <i class="fas fa-hand-holding-usd" style="font-size: 2rem;  margin-right: 10px;"></i>
                     </div>
                     <h5>Offer</h5>
                 </div>
@@ -150,12 +150,12 @@
                 </div>
                 @if (Model.OfferStatus == "Approved")
                 {
-                    <a asp-action="DeliveryDetails" asp-controller="Clients" asp-route-id="@Model.DeliveryId" style="color:#00aa87;" class="btn btn-clear">See delivery</a>
+                    <a asp-action="DeliveryDetails" asp-controller="Clients" asp-route-id="@Model.DeliveryId"  class="btn btn-clear">See delivery</a>
                 }
                 else if (Model.OfferStatus == "Pending")
                 {
                     <h5 class="title">Actions:</h5>
-                    <a asp-action="AcceptOffer" asp-controller="Clients" asp-route-id="@Model.Id" style="color:#00aa87;" class="btn btn-clear">BOOK</a>
+                    <a asp-action="AcceptOffer" asp-controller="Clients" asp-route-id="@Model.Id"  class="btn btn-clear">BOOK</a>
                 }
             </div>
         </div>

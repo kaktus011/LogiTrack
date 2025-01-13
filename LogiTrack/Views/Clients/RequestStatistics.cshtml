@@ -21,19 +21,19 @@
         <div class="card" id="locationCard">
             <div class="card-content">
                 <h3>Average price given by you</h3>
-                <p><b>@Model.AveragePrice BGN</b></p>
+                <p><b>@Model.AveragePrice.ToString("f2") BGN</b></p>
             </div>
         </div>
         <div class="card" id="locationCard">
             <div class="card-content">
                 <h3>Average weight</h3>
-                <p><b>@Model.AverageWeight KG</b></p>
+                <p><b>@Model.AverageWeight.ToString("f2") KG</b></p>
             </div>
         </div>
         <div class="card" id="locationCard">
             <div class="card-content">
                 <h3>Average weight</h3>
-                <p><b>@Model.AverageVolume M3</b></p>
+                <p><b>@Model.AverageVolume.ToString("f2") M3</b></p>
             </div>
         </div>
     </div>

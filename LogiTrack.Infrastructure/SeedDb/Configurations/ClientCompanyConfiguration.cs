@@ -32,7 +32,7 @@ namespace LogiTrack.Infrastructure.SeedDb.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             var data = new SeedData();
-            builder.HasData(new ClientCompany[] { data.ClientCompany1, data.ClientCompany2 });
+            builder.HasData(new ClientCompany[] { data.ClientCompany1});
         }
     }
 }

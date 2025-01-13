@@ -26,13 +26,13 @@
         <div class="card" id="locationCard">
             <div class="card-content">
                 <h3>Average volume</h3>
-                <p><b>@Model.AverageVolume M3</b></p>
+                <p><b>@Model.AverageVolume.ToString("F2") M3</b></p>
             </div>
         </div>
         <div class="card" id="locationCard">
             <div class="card-content">
                 <h3>Average weight</h3>
-                <p><b>@Model.AverageWeight kG</b></p>
+                <p><b>@Model.AverageWeight.ToString("F2") KG</b></p>
             </div>
         </div>
     </div>

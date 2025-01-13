@@ -99,7 +99,7 @@
                     <h4><b>Invoices</b></h4>
                     @if (!Model.Invoice.IsPaid)
                     {
-                        <a asp-action="MarkAsPaid" asp-controller="Accountant" asp-route-id="@Model.Id" class="btn btn-primary">MARK AS PAID +</a>
+                        <a asp-action="MarkAsPaid" asp-controller="Accountant" asp-route-id="@Model.Id" class="btn btn-primary" style="padding:16px;">MARK AS PAID +</a>
                     }
                 </div>
             </div>
