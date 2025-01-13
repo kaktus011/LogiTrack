@@ -1,149 +1,168 @@
 ﻿@model LogiTrack.Core.ViewModels.Home.LoginViewModel
 
 @{
-    Layout = null;
+	Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="~/css/site.css" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login Page</title>
+	<link rel="stylesheet" href="~/css/site.css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-       
-        .login-form-container h2 {
-            margin-bottom: 240px;
-        }
-        .login-form-container h3 {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #666;
-        }
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<style>
+		body, html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
-        form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-size: 10px;
-            margin-top: 15px;
-            color: #333;
-        }
+		.login-form-container h2 {
+			margin-bottom: 240px;
+		}
 
-        input[type="email"],
-        input[type="password"] {
-            width: 85%;
-            border: none;
-            border-bottom: 2px solid #007bff;
-            padding: 8px 0;
-            margin-bottom: 15px;
-        }
+		.login-form-container h3 {
+			margin-top: 10px;
+			font-size: 18px;
+			color: #666;
+		}
 
-            input[type="email"]:focus,
-            input[type="password"]:focus {
-                outline: none;
-                border-bottom-color: #0056b3;
-            }
+		form {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+		}
 
-        .password-container {
-            position: relative;
-        }
-        .password-toggle {
-            margin-left: 10px;
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-70%);
-            cursor: pointer;
-            color: #888;
-        }
-        button[type="submit"] {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 55px;
-        }
-        .no-account {
-            margin-top: 20px;
-        }
-        .no-account a {
-            color: #007bff;
-            text-decoration: none;
-        }
+		label {
+			font-size: 10px;
+			margin-top: 15px;
+			color: #333;
+		}
 
-        .video-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-            overflow: hidden;
-        }
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    </style>
+		input[type="email"],
+		input[type="password"] {
+			width: 100%;
+			border: none;
+			border-bottom: 2px solid #007bff;
+			padding: 8px 0;
+			margin-bottom: 15px;
+		}
+
+			input[type="email"]:focus,
+			input[type="password"]:focus {
+				outline: none;
+				border-bottom-color: #0056b3;
+			}
+
+		.email-container,
+		.password-container {
+			position: relative;
+			width: 97%;
+		}
+
+			.email-container input,
+			.password-container input {
+				/* Adjust width to account for the toggle icon */
+				width: calc(100% - 40px);
+			}
+
+		.password-toggle {
+			position: absolute;
+			top: 50%;
+			right: 10px;
+			transform: translateY(-50%);
+			cursor: pointer;
+			color: #888;
+		}
+
+		button[type="submit"] {
+			margin-top: 20px;
+			padding: 10px;
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			margin-right: 55px;
+		}
+
+		.no-account {
+			margin-top: 20px;
+		}
+
+			.no-account a {
+				color: #007bff;
+				text-decoration: none;
+			}
+
+		.video-container {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #f0f0f0;
+			overflow: hidden;
+		}
+
+			.video-container video {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+	</style>
+
 </head>
 <body>
-    <div class="login-video-container">
-        <div class="login-form-container">
-            <h2>LogiTrack</h2>
-            <h3>Login LogiTrack</h3>
-            <form asp-action="Login" asp-controller="Home" method="post">
-                <label asp-for="Email">Username</label>
-                <input asp-for="Email"  placeholder="Please enter" required>
-                <span asp-validation-for="Email"></span>
-                
-                <label asp-for="Password">Password</label>
-                <div class="password-container" style="width:30%;">
-                    <input asp-for="Password" type="password" placeholder="Please enter" required>
-                    <i class="fas fa-eye password-toggle"></i>
-                </div>
-                <span asp-validation-for="Password"></span>
+	<div class="login-video-container">
+		<div class="login-form-container">
+			<h2>LogiTrack</h2>
+			<h3>Login LogiTrack</h3>
+			<form asp-action="Login" asp-controller="Home" method="post">
+				<label asp-for="Email">Username</label>
+				<div class="email-container">
+					<input asp-for="Email" placeholder="Please enter" required>
+				</div>
+				<span asp-validation-for="Email"></span>
 
-                <button type="submit">Login</button>
-            </form>
-                <div class="no-account">Don't have an account? <a asp-action="Register" asp-controller="Clients">Register</a></div>
-        </div>
-        <div class="video-container">
-            <video autoplay loop muted ">
-    <source src="https://cdn.pixabay.com/videvo/logistics-example.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+				<label asp-for="Password">Password</label>
+				<div class="password-container">
+					<input asp-for="Password" type="password" placeholder="Please enter" required>
+					<i class="fas fa-eye password-toggle"></i>
+				</div>
+				<span asp-validation-for="Password"></span>
 
-        </div>
-    </div>
+				<button type="submit">Login</button>
+			</form>
+			<div class="no-account">Don't have an account? <a asp-action="Register" asp-controller="Clients">Register</a></div>
+		</div>
 
-    <script>
-        document.querySelector('.password-toggle').addEventListener('click', function() {
-            const passwordInput = document.querySelector('input[type="password"]');
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                this.classList.replace("fa-eye", "fa-eye-slash");
-            } else {
-                passwordInput.type = "password";
-                this.classList.replace("fa-eye-slash", "fa-eye");
-            }
-        });
-    </script>
+		<div class="video-container">
+			<video autoplay loop muted>
+				<source src="~/truck-driving-on-the-highway.mp4" type="video/mp4">
+				<source src="~/truck-driving-on-the-highway.webm" type="video/webm">
+				Your browser does not support the video tag.
+			</video>
+		</div>
+	</div>
+
+	<script>
+		document.querySelector('.password-toggle').addEventListener('click', function() {
+			const passwordInput = document.querySelector('.password-container input');
+			if (passwordInput.type === "password") {
+				passwordInput.type = "text";
+				this.classList.replace("fa-eye", "fa-eye-slash");
+			} else {
+				passwordInput.type = "password";
+				this.classList.replace("fa-eye-slash", "fa-eye");
+			}
+		});
+	</script>
+
 </body>
 </html>
